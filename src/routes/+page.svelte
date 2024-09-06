@@ -2,8 +2,20 @@
 
   import { invoke } from '@tauri-apps/api/tauri';
 
-  const startFocusTime = () => {
+  const hostsFile = '/etc/hosts';
+  const distractingSites = ['facebook.com', 'twitter.com', 'instagram.com', 'reddit.com'];
+  const start = '#-freemind-blacklist-start-#';
+  const end = '#-freemind-blacklist-end-#';
+  const redirectUrl = '127.0.0.1';
+
+  const startFocusTime = async () => {
     console.log("Starting focus time")
+    try {
+      const hostContents = await invoke('read_file_contents', { filePath: hostsFile });
+      console.log("Host contents: ", hostContents)
+    } catch (error) {
+      console.error('Error reading hosts file:', error);
+    }
   }
   const stopFocusTime = () => {
     console.log("Stopping focus time")
@@ -19,10 +31,6 @@
       console.error('Error checking elevated privileges:', error);
       return false;
     }
-  };
-
-  const sayHello = async (): Promise<string> => {
-    return await invoke('hello_world');
   };
 </script>
 

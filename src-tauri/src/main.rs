@@ -37,30 +37,30 @@ fn is_elevated() -> Result<bool, String> {
    }
 }
 
-// Learn more about Tauri commands at https://tauri.app/v1/guides/features/command
 #[tauri::command]
-fn greet(name: &str) -> String {
-    format!("Hello, {}! You've been greeted from Rust!", name)
+fn read_file_contents(file_path: String) -> Result<String, String> {
+    std::fs::read_to_string(file_path)
+        .map_err(|err| format!("Failed to read file: {}", err))
 }
 
 #[tauri::command]
-fn hello_world() -> String {
-    println!("Hello world function called");
-    "Hello, World!".to_string()
+fn write_file_contents(file_path: String, contents: String) -> Result<(), String> {
+    std::fs::write(file_path, contents)
+        .map_err(|err| format!("Failed to write file: {}", err))
 }
 
 fn main() {
     tauri::Builder::default()
         .setup(|app| {
-               info!("Tauri setup complete");
-               #[cfg(debug_assertions)]
-               {
-                   let window = app.get_window("main").unwrap();
-                   window.open_devtools();
-               }
-               Ok(())
-           })
-        .invoke_handler(tauri::generate_handler![greet, hello_world, is_elevated])
+            info!("Tauri setup complete");
+                #[cfg(debug_assertions)]
+                {
+                    let window = app.get_window("main").unwrap();
+                    window.open_devtools();
+                }
+                Ok(())
+        })
+        .invoke_handler(tauri::generate_handler![is_elevated, read_file_contents, write_file_contents])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }
