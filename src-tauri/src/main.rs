@@ -1,7 +1,7 @@
 // Prevents additional console window on Windows in release, DO NOT REMOVE!!
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
-use log::{info, error};
+use log::{info};
 use tauri::Manager;
 use std::process::Command;
 
@@ -49,6 +49,70 @@ fn write_file_contents(file_path: String, contents: String) -> Result<(), String
         .map_err(|err| format!("Failed to write file: {}", err))
 }
 
+#[tauri::command]
+fn restart_network() -> Result<(), String> {
+    #[cfg(target_os = "macos")]
+    {
+        let output = Command::new("dscacheutil")
+            .arg("-flushcache")
+            .output()
+            .map_err(|e| format!("Failed to command to restart network: {}", e))?;
+        if output.status.success() {
+            Ok(())
+        } else {
+            Err(format!("Failed to restart network: {}", String::from_utf8_lossy(&output.stderr)))
+        }
+    }
+
+    #[cfg(target_os = "linux")]
+    {
+        let output = Command::new("/etc/init.d/networking")
+            .arg("restart")
+            .output()
+            .map_err(|e| format!("Failed to command to restart network: {}", e))?;
+        if output.status.success() {
+            Ok(())
+        } else {
+            Err(format!("Failed to restart network: {}", String::from_utf8_lossy(&output.stderr)))
+        }
+        let output = Command::new("/etc/init.d/nscd")
+            .arg("restart")
+            .output()
+            .map_err(|e| format!("Failed to command to restart network: {}", e))?;
+        if output.status.success() {
+            Ok(())
+        } else {
+            Err(format!("Failed to restart network: {}", String::from_utf8_lossy(&output.stderr)))
+        }
+        let output = Command::new("/etc/rc.d/nscd")
+            .arg("restart")
+            .output()
+            .map_err(|e| format!("Failed to command to restart network: {}", e))?;
+        if output.status.success() {
+            Ok(())
+        } else {
+            Err(format!("Failed to restart network: {}", String::from_utf8_lossy(&output.stderr)))
+        }
+        let output = Command::new("/etc/rc.d/init.d/nscd")
+            .arg("restart")
+            .output()
+            .map_err(|e| format!("Failed to command to restart network: {}", e))?;
+    }
+
+    #[cfg(target_os = "windows")]
+    {
+        let output = Command::new("ipconfig")
+            .arg("/flushdns")
+            .output()
+            .map_err(|e| format!("Failed to command to restart network: {}", e))?;
+        if output.status.success() {
+            Ok(())
+        } else {
+            Err(format!("Failed to restart network: {}", String::from_utf8_lossy(&output.stderr)))
+        }
+    }
+}
+
 fn main() {
     tauri::Builder::default()
         .setup(|app| {
@@ -60,7 +124,7 @@ fn main() {
                 }
                 Ok(())
         })
-        .invoke_handler(tauri::generate_handler![is_elevated, read_file_contents, write_file_contents])
+        .invoke_handler(tauri::generate_handler![is_elevated, read_file_contents, write_file_contents, restart_network])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }
