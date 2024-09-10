@@ -4,6 +4,8 @@
 use log::{info};
 use tauri::Manager;
 use std::process::Command;
+use tauri::{SystemTray, SystemTrayEvent, CustomMenuItem, SystemTrayMenu, WindowEvent};
+
 
 #[tauri::command]
 fn is_elevated() -> Result<bool, String> {
@@ -114,6 +116,12 @@ fn restart_network() -> Result<(), String> {
 }
 
 fn main() {
+    let tray_menu = SystemTrayMenu::new()
+        .add_item(CustomMenuItem::new("show", "Show"))
+        .add_item(CustomMenuItem::new("quit", "Quit"));
+
+    let system_tray = SystemTray::new().with_menu(tray_menu);
+
     tauri::Builder::default()
         .setup(|app| {
             info!("Tauri setup complete");
@@ -123,6 +131,31 @@ fn main() {
                     window.open_devtools();
                 }
                 Ok(())
+        })
+        .on_window_event(|event| {
+                if let WindowEvent::CloseRequested { api, .. } = event.event() {
+                api.prevent_close();
+                let window = event.window();
+                window.hide().unwrap();
+            }
+        })
+        .system_tray(system_tray)
+        .on_system_tray_event(|app, event| {
+            match event {
+                SystemTrayEvent::MenuItemClick { id, .. } => {
+                    let main_window = app.get_window("main").unwrap();
+                    match id.as_str() {
+                        "show" => {
+                            main_window.show().unwrap();
+                        }
+                        "quit" => {
+                            std::process::exit(0);
+                        }
+                    _ => {}
+                    }
+                }
+                _ => {}
+            }
         })
         .invoke_handler(tauri::generate_handler![is_elevated, read_file_contents, write_file_contents, restart_network])
         .run(tauri::generate_context!())
