@@ -3,8 +3,8 @@
   import {invoke} from '@tauri-apps/api/tauri';
 
   const hostsFile = '/etc/hosts';
-  const possibleSubdomains = ["www", "news", "blog"]
-  const distractingSites = ['facebook.com', 'twitter.com', 'instagram.com', 'reddit.com', 'x.com', 'linkedin.com'];
+  const possibleSubdomains = ["www", "news", "blog", "web"]
+  const distractingSites = ['facebook.com', 'twitter.com', 'instagram.com', 'reddit.com', 'x.com', 'linkedin.com', 'youtube.com', 'whatsapp.com'];
   const start = '#-freemind-blacklist-start-#';
   const end = '#-freemind-blacklist-end-#';
   const redirectUrl = '127.0.0.1';
@@ -63,6 +63,7 @@
       console.error('Error reading hosts file:', error);
     }
   }
+
   const stopFocusTime = async () => {
     console.log("Stopping focus time")
     try {
@@ -86,6 +87,7 @@
       return false;
     }
   };
+
 </script>
 
 <div class="container">
@@ -101,7 +103,11 @@
       <h3>Root privileges are not enabled, this app might not work, please restart as root!</h3>
     {/if}
     <div class="row">
-      <button on:click={startFocusTime} disabled={!isRoot}>Start Focus Time</button>
+    <button
+      on:click={startFocusTime} disabled={!isRoot}
+    >
+      Start Focus Time
+    </button>
     </div>
 
     <div class="row">

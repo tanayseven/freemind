@@ -10,6 +10,7 @@ A simple tool to help you stay focused and away from distractions
 - [X] Read and modify the hosts file
 - [X] Add a website to the hosts file
 - [X] Remove a website from the hosts file
+- [ ] Add code to show the current status of the freedom mode
 - [ ] Start the timer
 - [ ] Stop the timer
 - [ ] Pause the timer
