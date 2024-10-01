@@ -1,1 +1,4 @@
-<script>import "../app.css";</script><slot></slot>
+<script>import "../app.css";
+import {ModeWatcher} from "mode-watcher";</script><slot></slot>
+<ModeWatcher />
+<slot />

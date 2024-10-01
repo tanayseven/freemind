@@ -1,6 +1,11 @@
 <script lang="ts">
 
   import {invoke} from '@tauri-apps/api/tauri';
+  import {Button} from "$lib/components/ui/button";
+  import {ModeWatcher, toggleMode} from "mode-watcher";
+  import {Moon, Sun} from "lucide-svelte";
+  import {Label} from "$lib/components/ui/label";
+  import {Switch} from "$lib/components/ui/switch";
 
   const hostsFile = '/etc/hosts';
   const possibleSubdomains = ["www", "news", "blog", "web"]
@@ -76,6 +81,30 @@
     }
   }
 
+  const isFocusTime = async () => {
+    console.log("Checking focus time")
+    try {
+      const hostContents: string = await invoke('read_file_contents', { filePath: hostsFile });
+      return areSitesBlocked(hostContents);
+    } catch (error) {
+      console.error('Error reading hosts file:', error);
+      return false;
+    }
+  }
+
+  const toggleFocusTime = async () => {
+    console.log("Toggling focus time")
+    try {
+      if (await isFocusTime()) {
+        await stopFocusTime();
+      } else {
+        await startFocusTime();
+      }
+    } catch (error) {
+      console.error('Error reading hosts file:', error);
+    }
+  }
+
   const isRoot = async () => {
     try {
       console.log("Checking if root...")
@@ -90,32 +119,43 @@
 
 </script>
 
-<div class="container">
-
-  <h1>Free Mind</h1>
-
-  {#await isRoot()}
-    <h3>Checking root privileges...</h3>
-  {:then isRoot}
-    {#if isRoot}
-      <h3>Root privileges are enabled!</h3>
-    {:else}
-      <h3>Root privileges are not enabled, this app might not work, please restart as root!</h3>
-    {/if}
-    <div class="row">
-    <button
-      on:click={startFocusTime} disabled={!isRoot}
-    >
-      Start Focus Time
-    </button>
+<div class="container h-full p-0">
+  <div class="container p-4 flex flex-col space-y-10">
+    <div class="grid grid-cols-[1fr_0rem]">
+      <h1 class="grid self-center text-4xl font-extrabold tracking-tight lg:text-5xl justify-center">Free Mind</h1>
+      <Button class="flex place-self-end content-center" on:click={toggleMode} variant="outline" size="icon">
+        <Sun
+          class="h-[1.2rem] w-[1.2rem] rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0"
+        />
+        <Moon
+          class="absolute h-[1.2rem] w-[1.2rem] rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100"
+        />
+        <span class="sr-only">Toggle theme</span>
+      </Button>
     </div>
 
-    <div class="row">
-      <button on:click={stopFocusTime} disabled={!isRoot}>Stop Focus Time</button>
-    </div>
-  {:catch error}
-    <h3>Error checking elevated privileges: {error}</h3>
-  {/await}
+    {#await isRoot()}
+      <div class="flex justify-center">
+        <h3 class="text-yellow-700">Checking root privileges...</h3>
+      </div>
+    {:then isRoot}
+      {#if isRoot}
+        <div class="flex justify-center text-green-700">
+          <h3>Root privileges are enabled!</h3>
+        </div>
+      {:else}
+        <div class="flex justify-center text-red-700">
+          <h3>Root privileges are not enabled, this app might not work, please restart as root!</h3>
+        </div>
+      {/if}
+      <div class="flex items-center justify-center space-x-2">
+        <Switch id="focus-mode" on:click={toggleFocusTime} disabled={!isRoot} />
+        <Label class="justify-center" for="focus-mode">Focus Mode</Label>
+      </div>
+    {:catch error}
+      <h3>Error checking elevated privileges: {error}</h3>
+    {/await}
+  </div>
 </div>
 
 <style>
