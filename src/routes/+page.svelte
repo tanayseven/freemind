@@ -2,7 +2,7 @@
 
   import {invoke} from '@tauri-apps/api/tauri';
   import {Button} from "$lib/components/ui/button";
-  import {ModeWatcher, toggleMode} from "mode-watcher";
+  import {toggleMode} from "mode-watcher";
   import {Moon, Sun} from "lucide-svelte";
   import {Label} from "$lib/components/ui/label";
   import {Switch} from "$lib/components/ui/switch";
@@ -13,6 +13,7 @@
   const start = '#-freemind-blacklist-start-#';
   const end = '#-freemind-blacklist-end-#';
   const redirectUrl = '127.0.0.1';
+
 
   const areSitesBlocked = (hostsFileContents: string) => {
     return hostsFileContents.includes(start) && hostsFileContents.includes(end);
@@ -92,6 +93,8 @@
     }
   }
 
+  let focusMode = false;
+
   const toggleFocusTime = async () => {
     console.log("Toggling focus time")
     try {
@@ -117,9 +120,13 @@
     }
   };
 
+  const onLoad = async () => {
+    focusMode = await isFocusTime();
+  }
+
 </script>
 
-<div class="container h-full p-0">
+<div class="container h-full p-0" use:onLoad>
   <div class="container p-4 flex flex-col space-y-10">
     <div class="grid grid-cols-[1fr_0rem]">
       <h1 class="grid self-center text-4xl font-extrabold tracking-tight lg:text-5xl justify-center">Free Mind</h1>
@@ -149,7 +156,7 @@
         </div>
       {/if}
       <div class="flex items-center justify-center space-x-2">
-        <Switch id="focus-mode" on:click={toggleFocusTime} disabled={!isRoot} />
+        <Switch id="focus-mode" on:click={toggleFocusTime} disabled={!isRoot} bind:checked={focusMode} />
         <Label class="justify-center" for="focus-mode">Focus Mode</Label>
       </div>
     {:catch error}
