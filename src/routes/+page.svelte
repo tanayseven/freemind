@@ -145,7 +145,7 @@
         </div>
       {:else}
         <div class="flex justify-center text-red-700">
-          <h3>Root privileges are not enabled, this app might not work, please restart as root!</h3>
+          <h3>Root privileges are not enabled, this app will not work, please restart as root!</h3>
         </div>
       {/if}
       <div class="flex items-center justify-center space-x-2">
