@@ -6,6 +6,7 @@
   import {Moon, Sun} from "lucide-svelte";
   import {Label} from "$lib/components/ui/label";
   import {Switch} from "$lib/components/ui/switch";
+  import {Input} from "$lib/components/ui/input";
 
   const hostsFile = '/etc/hosts';
   const possibleSubdomains = ["www", "news", "blog", "web"]
@@ -162,6 +163,15 @@
     {:catch error}
       <h3>Error checking elevated privileges: {error}</h3>
     {/await}
+    <div class="flex items-center justify-center space-x-2">
+      <Label for="till-time">Till Time</Label>
+      <Input id="till-time" type="time" class="w-max py-6" />
+    </div>
+    <div class="flex items-center justify-center space-x-2">
+      <Label for="till-date">Till Date</Label>
+      <Input id="till-date" type="date" class="w-max py-6" />
+    </div>
+
   </div>
 </div>
 
