@@ -3,7 +3,10 @@
   import {invoke} from '@tauri-apps/api/tauri';
   import {Button} from "$lib/components/ui/button";
   import {toggleMode} from "mode-watcher";
-  import {Moon, Sun} from "lucide-svelte";
+  import {Moon, Settings, Sun} from "lucide-svelte";
+  import * as RadioGroup from "$lib/components/ui/radio-group";
+  import { z } from "zod";
+  import {DateTime} from 'luxon';
   import {Label} from "$lib/components/ui/label";
   import {Switch} from "$lib/components/ui/switch";
   import {Input} from "$lib/components/ui/input";
@@ -15,6 +18,10 @@
   const end = '#-freemind-blacklist-end-#';
   const redirectUrl = '127.0.0.1';
 
+  type TimerMode = "focus-till" | "focus-for";
+  let timerMode: TimerMode = "focus-till";
+
+  const timerModeSchema = z.enum(["focus-till", "focus-for"]);
 
   const areSitesBlocked = (hostsFileContents: string) => {
     return hostsFileContents.includes(start) && hostsFileContents.includes(end);
@@ -95,6 +102,12 @@
   }
 
   let focusMode = false;
+  let currentTime = DateTime.now();
+
+  setInterval(() => {
+    currentTime = DateTime.now();
+    console.log(currentTime.toISO());
+  }, 1000);
 
   const toggleFocusTime = async () => {
     console.log("Toggling focus time")
@@ -147,29 +160,52 @@
         <h3 class="text-yellow-700">Checking root privileges...</h3>
       </div>
     {:then isRoot}
-      {#if isRoot}
-        <div class="flex justify-center text-green-700">
-          <h3>Root privileges are enabled!</h3>
-        </div>
-      {:else}
+      {#if !isRoot}
         <div class="flex justify-center text-red-700">
           <h3>Root privileges are not enabled, this app will not work, please restart as root!</h3>
         </div>
       {/if}
       <div class="flex items-center justify-center space-x-2">
         <Switch id="focus-mode" on:click={toggleFocusTime} disabled={!isRoot} bind:checked={focusMode} />
-        <Label class="justify-center" for="focus-mode">Focus Mode</Label>
+        <Label class="justify-center text-xl" for="focus-mode">Focus Mode</Label>
       </div>
     {:catch error}
       <h3>Error checking elevated privileges: {error}</h3>
     {/await}
-    <div class="flex items-center justify-center space-x-2">
-      <Label for="till-time">Till Time</Label>
-      <Input id="till-time" type="time" class="w-max py-6" />
+    <div class="flex items-center justify-center">
+      <Label for="time-remaining" class="text-xl ml-2 mr-4">Time remaining:</Label>
+      <span id="time-remaining" class="text-muted-foreground text-xl w-5 text-center">0</span>
+      <Label for="time-remaining" class="text-xl ml-2 mr-4">days</Label>
+      <span id="time-remaining" class="text-muted-foreground text-xl w-5 text-center">0</span>
+      <Label for="time-remaining" class="text-xl ml-2 mr-4">hours</Label>
+      <span id="time-remaining" class="text-muted-foreground text-xl w-5 text-center">0</span>
+      <Label for="time-remaining" class="text-xl ml-2 mr-4">minutes</Label>
+      <span id="time-remaining" class="text-muted-foreground text-xl w-5 text-center">0</span>
+      <Label for="time-remaining" class="text-xl ml-2 mr-4">seconds</Label>
     </div>
-    <div class="flex items-center justify-center space-x-2">
-      <Label for="till-date">Till Date</Label>
-      <Input id="till-date" type="date" class="w-max py-6" />
+    <RadioGroup.Root value="comfortable">
+      <div class="flex items-center justify-center">
+        <RadioGroup.Item value="focus-till" id="focus-till-radio" class="mr-4" on:click={()=>timerMode="focus-till"} />
+        <Label for="till-time" class="text-xl mr-4">Focus till:</Label>
+        <Input id="till-time" type="time" class="w-max py-6 text-xl mr-4" />
+        <Input id="till-time" type="date" class="w-max py-6 text-xl" />
+      </div>
+      <div class="flex items-center justify-center">
+        <RadioGroup.Item value="focus-for" id="focus-for-radio" class="mr-4" on:click={()=>timerMode="focus-till"} />
+        <Label for="till-date" class="text-xl mr-4">Focus for:</Label>
+        <Input id="till-date" type="number" value="0" class="w-20 py-6 text-xl" />
+        <Label for="till-date" class="text-xl ml-2 mr-4">days</Label>
+        <Input id="till-date" type="number" value="0" class="w-20 py-6 text-xl" />
+        <Label for="till-date" class="text-xl ml-2 mr-4">hours</Label>
+        <Input id="till-date" type="number" value="0" class="w-20 py-6 text-xl" />
+        <Label for="till-date" class="text-xl ml-2 mr-4">minutes</Label>
+      </div>
+    </RadioGroup.Root>
+    <div class="flex items-center justify-end space-x-2">
+      <Button variant="outline" class="text-xl">
+        <Settings class="mr-2 h-6 w-6" />
+        Preferences
+      </Button>
     </div>
 
   </div>
