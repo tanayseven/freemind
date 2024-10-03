@@ -10,16 +10,15 @@ A simple tool to help you stay focused and away from distractions
 - [X] Read and modify the hosts file
 - [X] Add a website to the hosts file
 - [X] Remove a website from the hosts file
-- [ ] Add code to show the current status of the focus mode
-- [ ] Start the timer
-- [ ] Stop the timer
-- [ ] Pause the timer
-- [ ] Pre-set focus websites
+- [X] Add code to show the current status of the focus mode
+- [X] Start the timer
+- [X] Stop the timer
+- [ ] Pre-configured focus website data
 - [ ] Blacklisting websites
 - [ ] Whitelisting websites
-- [ ] Pomodoro timer
-- [ ] Customizable timer
-- [ ] Customizable break time
-- [ ] Focus profiles
 - [ ] Hard-to reach stop button
-- [ ] Pre-configured focus website options
+- [ ] Pause the timer
+- [ ] Customizable break time
+- [ ] Customizable timer
+- [ ] Pomodoro timer
+- [ ] Focus profiles
