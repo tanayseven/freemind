@@ -16,6 +16,18 @@
         "all": false,
         "open": true
       },
+      "fs": {
+        "all": false,
+        "readFile": true,
+        "writeFile": true,
+        "createDir": true,
+        "scope": [
+          "$HOME/Library/Application Support/**/*"
+        ]
+      },
+      "path": {
+        "all": true
+      },
       "window": {
         "all": true
       }

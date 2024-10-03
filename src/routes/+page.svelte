@@ -7,6 +7,7 @@
   import {Label} from "$lib/components/ui/label";
   import {Switch} from "$lib/components/ui/switch";
   import {Input} from "$lib/components/ui/input";
+  import {loadSettings, saveSettings} from "../settings";
 
   const hostsFile = '/etc/hosts';
   const possibleSubdomains = ["www", "news", "blog", "web"]
@@ -154,6 +155,17 @@
 
   const onLoad = async () => {
     focusMode = await isFocusEnabled();
+    const currentSettings = await loadSettings();
+    timerValue = currentSettings.timerValue;
+  }
+
+  const saveAllPreferences = async () => {
+    const currentSettings = await loadSettings();
+    const newSettings = {
+      ...currentSettings,
+      timerValue,
+    }
+    await saveSettings(newSettings);
   }
 
 </script>
@@ -192,7 +204,7 @@
     {/await}
     <div class="flex items-center justify-center">
       <Label for="till-date" class="text-xl mr-4">Focus for:</Label>
-      <Input id="till-date" type="number" bind:value={timerValue} class="w-20 py-6 text-xl" disabled={isTimerRunning} />
+      <Input id="till-date" type="number" bind:value={timerValue} class="w-20 py-6 text-xl" disabled={isTimerRunning} on:change={saveAllPreferences} />
       <Label for="till-date" class="text-xl ml-2 mr-4">minutes</Label>
     </div>
     <div class="flex items-center justify-center">
