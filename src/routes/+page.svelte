@@ -4,9 +4,6 @@
   import {Button} from "$lib/components/ui/button";
   import {toggleMode} from "mode-watcher";
   import {Moon, Settings, Sun} from "lucide-svelte";
-  import * as RadioGroup from "$lib/components/ui/radio-group";
-  import { z } from "zod";
-  import {DateTime} from 'luxon';
   import {Label} from "$lib/components/ui/label";
   import {Switch} from "$lib/components/ui/switch";
   import {Input} from "$lib/components/ui/input";
@@ -17,11 +14,6 @@
   const start = '#-freemind-blacklist-start-#';
   const end = '#-freemind-blacklist-end-#';
   const redirectUrl = '127.0.0.1';
-
-  type TimerMode = "focus-till" | "focus-for";
-  let timerMode: TimerMode = "focus-till";
-
-  const timerModeSchema = z.enum(["focus-till", "focus-for"]);
 
   const areSitesBlocked = (hostsFileContents: string) => {
     return hostsFileContents.includes(start) && hostsFileContents.includes(end);
@@ -66,31 +58,43 @@
     return newLines.join('\n');
   }
 
-  const startFocusTime = async () => {
+  const startFocus = async () => {
     console.log("Starting focus time")
     try {
       const hostContents: string = await invoke('read_file_contents', { filePath: hostsFile });
       const modifiedHostContents = addBlockedSites(hostContents)
       await invoke('write_file_contents', { filePath: hostsFile, contents: modifiedHostContents });
       await invoke('restart_network');
+      focusMode = true;
     } catch (error) {
       console.error('Error reading hosts file:', error);
     }
   }
 
-  const stopFocusTime = async () => {
+  type TimeRemaining = {
+    minutes: number;
+    seconds: number;
+  }
+
+  const timeRemaining: TimeRemaining = {
+    minutes: 0,
+    seconds: 0
+  }
+
+  const stopFocus = async () => {
     console.log("Stopping focus time")
     try {
       const hostContents: string = await invoke('read_file_contents', { filePath: hostsFile });
       const modifiedHostContents = removeBlockedSites(hostContents)
       await invoke('write_file_contents', { filePath: hostsFile, contents: modifiedHostContents });
       await invoke('restart_network');
+      focusMode = false;
     } catch (error) {
       console.error('Error reading hosts file:', error);
     }
   }
 
-  const isFocusTime = async () => {
+  const isFocusEnabled = async () => {
     console.log("Checking focus time")
     try {
       const hostContents: string = await invoke('read_file_contents', { filePath: hostsFile });
@@ -102,20 +106,34 @@
   }
 
   let focusMode = false;
-  let currentTime = DateTime.now();
+  const secondsInMinute = 60;
+  let timerValue = 30;
+  let isTimerRunning = false;
+  let timeRemainingInSeconds = 0;
 
-  setInterval(() => {
-    currentTime = DateTime.now();
-    console.log(currentTime.toISO());
-  }, 1000);
+  const startTimer = () => {
+    isTimerRunning = true;
+    timeRemainingInSeconds = timerValue * secondsInMinute;
+    startFocus();
+    const interval = setInterval(() => {
+      timeRemainingInSeconds -= 1;
+      timeRemaining.minutes = Math.floor(timeRemainingInSeconds / secondsInMinute);
+      timeRemaining.seconds = timeRemainingInSeconds % secondsInMinute;
+      if (timeRemainingInSeconds <= 0) {
+        clearInterval(interval);
+        stopFocus();
+        isTimerRunning = false;
+      }
+    }, 1000);
+  }
 
-  const toggleFocusTime = async () => {
+  const toggleFocus = async () => {
     console.log("Toggling focus time")
     try {
-      if (await isFocusTime()) {
-        await stopFocusTime();
+      if (await isFocusEnabled()) {
+        await stopFocus();
       } else {
-        await startFocusTime();
+        await startFocus();
       }
     } catch (error) {
       console.error('Error reading hosts file:', error);
@@ -135,7 +153,7 @@
   };
 
   const onLoad = async () => {
-    focusMode = await isFocusTime();
+    focusMode = await isFocusEnabled();
   }
 
 </script>
@@ -166,48 +184,33 @@
         </div>
       {/if}
       <div class="flex items-center justify-center space-x-2">
-        <Switch id="focus-mode" on:click={toggleFocusTime} disabled={!isRoot} bind:checked={focusMode} />
+        <Switch id="focus-mode" on:click={toggleFocus} disabled={!isRoot} bind:checked={focusMode} />
         <Label class="justify-center text-xl" for="focus-mode">Focus Mode</Label>
       </div>
     {:catch error}
       <h3>Error checking elevated privileges: {error}</h3>
     {/await}
     <div class="flex items-center justify-center">
-      <Label for="time-remaining" class="text-xl ml-2 mr-4">Time remaining:</Label>
-      <span id="time-remaining" class="text-muted-foreground text-xl w-5 text-center">0</span>
-      <Label for="time-remaining" class="text-xl ml-2 mr-4">days</Label>
-      <span id="time-remaining" class="text-muted-foreground text-xl w-5 text-center">0</span>
-      <Label for="time-remaining" class="text-xl ml-2 mr-4">hours</Label>
-      <span id="time-remaining" class="text-muted-foreground text-xl w-5 text-center">0</span>
-      <Label for="time-remaining" class="text-xl ml-2 mr-4">minutes</Label>
-      <span id="time-remaining" class="text-muted-foreground text-xl w-5 text-center">0</span>
-      <Label for="time-remaining" class="text-xl ml-2 mr-4">seconds</Label>
+      <Label for="till-date" class="text-xl mr-4">Focus for:</Label>
+      <Input id="till-date" type="number" bind:value={timerValue} class="w-20 py-6 text-xl" disabled={isTimerRunning} />
+      <Label for="till-date" class="text-xl ml-2 mr-4">minutes</Label>
     </div>
-    <RadioGroup.Root value="comfortable">
-      <div class="flex items-center justify-center">
-        <RadioGroup.Item value="focus-till" id="focus-till-radio" class="mr-4" on:click={()=>timerMode="focus-till"} />
-        <Label for="till-time" class="text-xl mr-4">Focus till:</Label>
-        <Input id="till-time" type="time" class="w-max py-6 text-xl mr-4" />
-        <Input id="till-time" type="date" class="w-max py-6 text-xl" />
-      </div>
-      <div class="flex items-center justify-center">
-        <RadioGroup.Item value="focus-for" id="focus-for-radio" class="mr-4" on:click={()=>timerMode="focus-till"} />
-        <Label for="till-date" class="text-xl mr-4">Focus for:</Label>
-        <Input id="till-date" type="number" value="0" class="w-20 py-6 text-xl" />
-        <Label for="till-date" class="text-xl ml-2 mr-4">days</Label>
-        <Input id="till-date" type="number" value="0" class="w-20 py-6 text-xl" />
-        <Label for="till-date" class="text-xl ml-2 mr-4">hours</Label>
-        <Input id="till-date" type="number" value="0" class="w-20 py-6 text-xl" />
-        <Label for="till-date" class="text-xl ml-2 mr-4">minutes</Label>
-      </div>
-    </RadioGroup.Root>
+    <div class="flex items-center justify-center">
+      <Button class="text-xl" variant="outline" on:click={startTimer} disabled={isTimerRunning}>Start Timer</Button>
+    </div>
     <div class="flex items-center justify-end space-x-2">
       <Button variant="outline" class="text-xl">
         <Settings class="mr-2 h-6 w-6" />
         Preferences
       </Button>
     </div>
-
+  </div>
+  <div class="absolute bottom-0">
+    <Label for="time-remaining" class="text-m ml-2 mr-4">Time remaining:</Label>
+    <span id="time-remaining" class="text-muted-foreground text-m w-5 text-center">{timeRemaining.minutes}</span>
+    <Label for="time-remaining" class="text-m ml-2 mr-4">minutes</Label>
+    <span id="time-remaining" class="text-muted-foreground text-m w-5 text-center">{timeRemaining.seconds}</span>
+    <Label for="time-remaining" class="text-m ml-2 mr-4">seconds</Label>
   </div>
 </div>
 
