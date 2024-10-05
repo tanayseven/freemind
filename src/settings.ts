@@ -4,33 +4,32 @@ import {createDir, readTextFile, writeFile} from "@tauri-apps/api/fs";
 const settingsDirectoryName = "tech.tanay.freemind";
 const settingsFileName = "settings.json";
 
-type Settings = {
+export type Website = {
+  name: string,
+  enabled: boolean,
+}
+
+export type Settings = {
   timerValue: number,
-  websiteBlockList: Record<string, string[]>
+  websiteBlockList: Record<string, Website[]>
 }
 
 const defaultSettings: Settings = {
   timerValue: 25,
   websiteBlockList: {
-    "Social Media": ["facebook.com", "twitter.com", "instagram.com"],
-    "Shopping": ["amazon.com", "flipkart.com"],
-    "Work": ["slack.com", "github.com"],
-    "News": ["nytimes.com", "cnn.com"],
-    "Entertainment": ["netflix.com", "youtube.com"],
-    "Games": ["steam.com", "epicgames.com"],
+    "Social Media": [{name: "facebook.com", enabled: true}, {name: "twitter.com", enabled: true}, {name: "instagram.com", enabled: true}],
+    "Shopping": [{name: "amazon.com", enabled: true}, {name: "flipkart.com", enabled: true}],
+    "Work": [{name: "slack.com", enabled: true}, {name: "github.com", enabled: true}],
+    "News": [{name: "nytimes.com", enabled: true}, {name: "cnn.com", enabled: true}],
+    "Entertainment": [{name: "netflix.com", enabled: true}, {name: "youtube.com", enabled: true}],
+    "Games": [{name: "steam.com", enabled: true}, {name: "epicgames.com", enabled: true}],
   }
 }
 
 const mergeSettings = (oldSettings: Settings, newSettings: Settings): Settings => {
-  console.log(`before merging settings ${JSON.stringify(oldSettings)}`)
-  console.log(`before merging settings ${JSON.stringify(newSettings)}`)
-  const newVar = {...oldSettings.websiteBlockList, ...newSettings.websiteBlockList};
-  console.log(`merging settings ${JSON.stringify(oldSettings)}`)
-  console.log(`merging settings ${JSON.stringify(newSettings)}`)
-  console.log(`merging settings ${JSON.stringify(newVar)}`)
   return {
     timerValue: newSettings.timerValue,
-    websiteBlockList: newVar,
+    websiteBlockList: {...oldSettings.websiteBlockList, ...newSettings.websiteBlockList},
   }
 }
 
@@ -40,13 +39,10 @@ const saveSettings = async (settings: Settings) => {
   const settingsStem = `${configBase}${settingsDirectoryName}`;
   await createDir(settingsStem, {recursive: true});
   const settingsPath = `${configBase}${settingsDirectoryName}/${settingsFileName}`;
-  const newSettings = mergeSettings(await loadSettings(), settings);
-  console.log(`saving settings ${JSON.stringify(newSettings)}`)
-  await writeFile(settingsPath, JSON.stringify(newSettings));
+  await writeFile(settingsPath, JSON.stringify(settings));
 }
 
 const loadSettings = async (): Promise<Settings> => {
-  console.log(`loading settings`)
   const configBase = await configDir();
   const settingsPath = `${configBase}${settingsDirectoryName}/${settingsFileName}`;
   try {
@@ -57,7 +53,6 @@ const loadSettings = async (): Promise<Settings> => {
     return defaultSettings;
   }
   const existingSettings: Settings = JSON.parse(await readTextFile(settingsPath));
-  console.log(`Default settings ${JSON.stringify(defaultSettings)}`)
   const settings = mergeSettings(defaultSettings, existingSettings);
   console.log(`loaded settings ${JSON.stringify(settings)}`)
   return settings
