@@ -1,6 +1,6 @@
 <script lang="ts">
   import {Checkbox} from "$lib/components/ui/checkbox/index.js";
-  import {settingsStore, type Website} from "../../settings";
+  import {settingsStore, type Website} from "../settings";
 
   export let website: Website
   export let selectedWebsiteGroup: string

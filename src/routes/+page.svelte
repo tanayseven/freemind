@@ -5,17 +5,11 @@
   import {Label} from "$lib/components/ui/label";
   import {Switch} from "$lib/components/ui/switch";
   import {Input} from "$lib/components/ui/input";
-  import {settingsStore} from "../settings";
+  import {settingsStore} from "$lib/settings";
   import {goto} from "$app/navigation";
   import Header from "$lib/components/Header.svelte";
   import {Settings as SettingsIcon} from "lucide-svelte";
-
-  const hostsFile = '/etc/hosts';
-  const possibleSubdomains = ["www", "news", "blog", "web"]
-  const distractingSites = ['facebook.com', 'twitter.com', 'instagram.com', 'reddit.com', 'x.com', 'linkedin.com', 'youtube.com', 'whatsapp.com'];
-  const start = '#-freemind-blacklist-start-#';
-  const end = '#-freemind-blacklist-end-#';
-  const redirectUrl = '127.0.0.1';
+  import {areSitesBlocked, isFocusEnabled, startFocus, stopFocus} from "$lib/focus";
 
   let focusMode = false;
   const secondsInMinute = 60;
@@ -23,61 +17,6 @@
   let isTimerRunning = false;
   let timeRemainingInSeconds = 0;
 
-  const areSitesBlocked = (hostsFileContents: string) => {
-    return hostsFileContents.includes(start) && hostsFileContents.includes(end);
-  }
-
-  const addBlockedSites = (hostsFileContents: string) => {
-    if (areSitesBlocked(hostsFileContents)) return hostsFileContents;
-    const lines = hostsFileContents.split('\n');
-    let newLines = [start];
-    for (let distractingSite of distractingSites) {
-      const line = `${redirectUrl} ${distractingSite}`;
-      newLines.push(line);
-      for (let subdomain of possibleSubdomains) {
-        const line = `${redirectUrl} ${([subdomain, distractingSite].join('.'))}`;
-        newLines.push(line);
-      }
-    }
-    newLines.push(end);
-    newLines.push('');
-    return lines.concat(newLines).join('\n');
-  }
-
-  const removeBlockedSites = (hostsFileContents: string) => {
-    if (!areSitesBlocked(hostsFileContents)) return hostsFileContents;
-    const lines = hostsFileContents.split('\n');
-    let newLines = [];
-    let isInsideBlockedSitesSection = false;
-    for (let line of lines) {
-      if (line.includes(start)) {
-        isInsideBlockedSitesSection = true;
-        continue;
-      }
-      if (line.includes(end)) {
-        isInsideBlockedSitesSection = false;
-        continue;
-      }
-      if (!isInsideBlockedSitesSection) {
-        newLines.push(line);
-      }
-    }
-    if (newLines[newLines.length - 1] === '') newLines.pop();
-    return newLines.join('\n');
-  }
-
-  const startFocus = async () => {
-    console.log("Starting focus time")
-    try {
-      const hostContents: string = await invoke('read_file_contents', { filePath: hostsFile });
-      const modifiedHostContents = addBlockedSites(hostContents)
-      await invoke('write_file_contents', { filePath: hostsFile, contents: modifiedHostContents });
-      await invoke('restart_network');
-      focusMode = true;
-    } catch (error) {
-      console.error('Error reading hosts file:', error);
-    }
-  }
 
   type TimeRemaining = {
     minutes: number;
@@ -89,41 +28,18 @@
     seconds: 0
   }
 
-  const stopFocus = async () => {
-    console.log("Stopping focus time")
-    try {
-      const hostContents: string = await invoke('read_file_contents', { filePath: hostsFile });
-      const modifiedHostContents = removeBlockedSites(hostContents)
-      await invoke('write_file_contents', { filePath: hostsFile, contents: modifiedHostContents });
-      await invoke('restart_network');
-      focusMode = false;
-    } catch (error) {
-      console.error('Error reading hosts file:', error);
-    }
-  }
-
-  const isFocusEnabled = async () => {
-    console.log("Checking focus time")
-    try {
-      const hostContents: string = await invoke('read_file_contents', { filePath: hostsFile });
-      return areSitesBlocked(hostContents);
-    } catch (error) {
-      console.error('Error reading hosts file:', error);
-      return false;
-    }
-  }
-
-  const startTimer = () => {
+  const startTimer = async () => {
     isTimerRunning = true;
     timeRemainingInSeconds = timerValue * secondsInMinute;
-    startFocus();
-    const interval = setInterval(() => {
+    await startFocus();
+    focusMode = await areSitesBlocked()
+    const interval = setInterval(async () => {
       timeRemainingInSeconds -= 1;
       timeRemaining.minutes = Math.floor(timeRemainingInSeconds / secondsInMinute);
       timeRemaining.seconds = timeRemainingInSeconds % secondsInMinute;
       if (timeRemainingInSeconds <= 0) {
         clearInterval(interval);
-        stopFocus();
+        await stopFocus();
         isTimerRunning = false;
       }
     }, 1000);

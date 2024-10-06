@@ -4,7 +4,7 @@
   import WebsiteGroupItem from "$lib/components/WebsiteGroupItem.svelte";
   import {Search} from "lucide-svelte";
   import {ScrollArea} from "$lib/components/ui/scroll-area/index.js";
-  import type {WebsiteBlockList} from "../../settings";
+  import type {WebsiteBlockList} from "../settings";
 
   export let selectedWebsiteGroup = "";
   export let websiteGroups: Record<string, WebsiteBlockList>;
@@ -27,7 +27,6 @@
         <WebsiteGroupItem
           bind:websiteGroup={websiteGroup}
           bind:selectedWebsiteGroup={selectedWebsiteGroup}
-          bind:websiteGroups={websiteGroups}
         />
         <Separator class="my-2" />
         {/if}

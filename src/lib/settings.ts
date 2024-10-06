@@ -83,11 +83,10 @@ const settingsStore = writable<Settings>(defaultSettings)
 
 loadSettings().then((settings) => {
   settingsStore.set(settings)
+  settingsStore.subscribe(async (settings) => {
+    await saveSettings(settings)
+  });
 })
-
-settingsStore.subscribe(async (settings) => {
-  await saveSettings(settings)
-});
 
 export {
   saveSettings,
