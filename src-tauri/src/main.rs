@@ -128,15 +128,16 @@ fn main() {
     let system_tray = SystemTray::new().with_menu(tray_menu);
 
     tauri::Builder::default()
-        .setup(|app| {
-            info!("Tauri setup complete");
-            #[cfg(debug_assertions)]
-            {
-                let window = app.get_window("main").unwrap();
-                window.open_devtools();
-            }
-            Ok(())
-        })
+// TODO: Uncomment the following to start in debug mode
+//         .setup(|app| {
+//             info!("Tauri setup complete");
+//             #[cfg(debug_assertions)]
+//             {
+//                 let window = app.get_window("main").unwrap();
+//                 window.open_devtools();
+//             }
+//             Ok(())
+//         })
         .on_window_event(|event| {
             if let WindowEvent::CloseRequested { api, .. } = event.event() {
                 api.prevent_close();

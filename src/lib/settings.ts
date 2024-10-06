@@ -1,6 +1,12 @@
 import {configDir} from "@tauri-apps/api/path";
 import {createDir, readTextFile, writeFile} from "@tauri-apps/api/fs";
 import {writable} from "svelte/store";
+import {socialMediaWebsites} from "$lib/lists/socialMedia";
+import {shoppingWebsites} from "$lib/lists/shopping";
+import {newsWebsites} from "$lib/lists/news";
+import {entertainmentWebsites} from "$lib/lists/entertainment";
+import {gamingWebsites} from "$lib/lists/gaming";
+import {adultWebsites} from "$lib/lists/adult";
 
 const settingsDirectoryName = "tech.tanay.freemind";
 const settingsFileName = "settings.json";
@@ -23,28 +29,12 @@ export type Settings = {
 const defaultSettings: Settings = {
   timerValue: 25,
   websiteBlockList: {
-    "Social Media": {
-      enabled: true, websites: [
-        {name: "facebook.com", enabled: true},
-        {name: "twitter.com", enabled: true},
-        {name: "instagram.com", enabled:true}
-      ]
-    },
-    "Shopping": {
-      enabled: true, websites: [{name: "amazon.com", enabled: true}, {name: "flipkart.com", enabled: true}]
-    },
-    "Work": {
-      enabled: true, websites: [{name: "slack.com", enabled: true}, {name: "github.com", enabled: true}]
-    },
-    "News": {
-      enabled: true, websites: [{name: "nytimes.com", enabled: true}, {name: "cnn.com", enabled: true}]
-    },
-    "Entertainment": {
-      enabled: true, websites: [{name: "netflix.com", enabled: true}, {name: "youtube.com", enabled: true}]
-    },
-    "Games": {
-      enabled: true, websites: [{name: "steam.com", enabled: true}, {name: "epicgames.com", enabled: true}]
-    },
+    "Social Media": {enabled: true, websites: socialMediaWebsites},
+    "Shopping": {enabled: true, websites: shoppingWebsites},
+    "News": {enabled: true, websites: newsWebsites},
+    "Entertainment": {enabled: true, websites: entertainmentWebsites},
+    "Games": {enabled: true, websites: gamingWebsites},
+    "Adult 18+": {enabled: true, websites: adultWebsites}
   }
 }
 

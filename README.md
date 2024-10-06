@@ -13,8 +13,9 @@ A simple tool to help you stay focused and away from distractions
 - [X] Add code to show the current status of the focus mode
 - [X] Start the timer
 - [X] Stop the timer
-- [ ] Pre-configured focus website data
-- [ ] Blacklisting websites
+- [X] Pre-configured focus website data
+- [X] Blacklisting websites
+- [X] Adjustable website settings
 - [ ] Whitelisting websites
 - [ ] Hard-to reach stop button
 - [ ] Pause the timer

@@ -1,6 +1,7 @@
 import {invoke} from "@tauri-apps/api/tauri";
 import {settingsStore} from "$lib/settings";
 import {get} from "svelte/store";
+import {readTextFile, writeFile} from "@tauri-apps/api/fs";
 
 const hostsFile = '/etc/hosts';
 const possibleSubdomains = ["www", "news", "blog", "web"]
@@ -18,7 +19,7 @@ const allEnabledDistractingSites = (): string[] => {
   let listOfWebsitesToBlock: string[] = []
   for (let websiteBlockList of Object.values(settings.websiteBlockList)) {
     if (websiteBlockList.enabled) {
-      listOfWebsitesToBlock = [...websiteBlockList.websites.map((website) => website.name)];
+      listOfWebsitesToBlock = [...listOfWebsitesToBlock, ...websiteBlockList.websites.map((website) => website.name)];
     }
   }
   return listOfWebsitesToBlock;
@@ -67,7 +68,7 @@ export const startFocus = async () => {
   console.log("Starting focus time")
   try {
     const hostContents: string = await invoke('read_file_contents', { filePath: hostsFile });
-    const modifiedHostContents = addBlockedSites(hostContents)
+    const modifiedHostContents = await addBlockedSites(hostContents);
     await invoke('write_file_contents', { filePath: hostsFile, contents: modifiedHostContents });
     await invoke('restart_network');
   } catch (error) {
@@ -79,7 +80,7 @@ export const stopFocus = async () => {
   console.log("Stopping focus time")
   try {
     const hostContents: string = await invoke('read_file_contents', { filePath: hostsFile });
-    const modifiedHostContents = removeBlockedSites(hostContents)
+    const modifiedHostContents = await removeBlockedSites(hostContents);
     await invoke('write_file_contents', { filePath: hostsFile, contents: modifiedHostContents });
     await invoke('restart_network');
   } catch (error) {
