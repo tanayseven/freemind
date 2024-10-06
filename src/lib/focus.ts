@@ -1,8 +1,9 @@
 import {invoke} from "@tauri-apps/api/tauri";
+import {settingsStore} from "$lib/settings";
+import {get} from "svelte/store";
 
 const hostsFile = '/etc/hosts';
 const possibleSubdomains = ["www", "news", "blog", "web"]
-const distractingSites = ['facebook.com', 'twitter.com', 'instagram.com', 'reddit.com', 'x.com', 'linkedin.com', 'youtube.com', 'whatsapp.com'];
 const start = '#-freemind-blacklist-start-#';
 const end = '#-freemind-blacklist-end-#';
 const redirectUrl = '127.0.0.1';
@@ -12,11 +13,22 @@ export const areSitesBlocked = async () => {
   return hostsFileContents.includes(start) && hostsFileContents.includes(end);
 }
 
+const allEnabledDistractingSites = (): string[] => {
+  const settings = get(settingsStore);
+  let listOfWebsitesToBlock: string[] = []
+  for (let websiteBlockList of Object.values(settings.websiteBlockList)) {
+    if (websiteBlockList.enabled) {
+      listOfWebsitesToBlock = [...websiteBlockList.websites.map((website) => website.name)];
+    }
+  }
+  return listOfWebsitesToBlock;
+}
+
 const addBlockedSites = async (hostsFileContents: string) => {
   if (await areSitesBlocked()) return hostsFileContents;
   const lines = hostsFileContents.split('\n');
   let newLines = [start];
-  for (let distractingSite of distractingSites) {
+  for (let distractingSite of allEnabledDistractingSites()) {
     const line = `${redirectUrl} ${distractingSite}`;
     newLines.push(line);
     for (let subdomain of possibleSubdomains) {
