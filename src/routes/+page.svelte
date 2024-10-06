@@ -2,8 +2,7 @@
 
   import {invoke} from '@tauri-apps/api/tauri';
   import {Button} from "$lib/components/ui/button";
-  import {toggleMode} from "mode-watcher";
-  import {Moon, Settings, Sun} from "lucide-svelte";
+  import {Settings} from "lucide-svelte";
   import {Label} from "$lib/components/ui/label";
   import {Switch} from "$lib/components/ui/switch";
   import {Input} from "$lib/components/ui/input";

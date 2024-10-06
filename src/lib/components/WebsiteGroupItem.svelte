@@ -6,7 +6,6 @@ import {Checkbox} from "$lib/components/ui/checkbox";
 export let websiteGroup: string;
 export let selectedWebsiteGroup: string;
 export let websiteGroups: Record<string, WebsiteBlockList>;
-
 </script>
 <div class="text-sm flex flex-row items-center justify-center">
         {#if selectedWebsiteGroup === websiteGroup}

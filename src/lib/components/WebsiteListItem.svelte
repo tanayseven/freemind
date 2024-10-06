@@ -1,8 +1,8 @@
 <script lang="ts">
-import {Checkbox} from "$lib/components/ui/checkbox/index.js";
-import type {Website} from "../../settings";
+  import {Checkbox} from "$lib/components/ui/checkbox/index.js";
+  import type {Website} from "../../settings";
 
-export let website: Website
+  export let website: Website
 </script>
 
 <div class="text-sm flex flex-row items-center justify-center">

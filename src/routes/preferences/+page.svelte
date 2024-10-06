@@ -1,14 +1,9 @@
 <script lang="ts">
-        import {Separator} from "$lib/components/ui/separator";
-import {ScrollArea} from "$lib/components/ui/scroll-area";
+import {Separator} from "$lib/components/ui/separator";
 import {loadSettings, saveSettings, type WebsiteBlockList} from "../../settings";
-        import Header from "$lib/components/Header.svelte";
-import WebsiteListItem from "$lib/components/WebsiteListItem.svelte";
-import WebsiteGroupItem from "$lib/components/WebsiteGroupItem.svelte";
-import {Input} from "$lib/components/ui/input";
-        import {Search} from "lucide-svelte";
-        import BlockGroups from "$lib/components/BlockGroups.svelte";
-        import BlockSites from "$lib/components/BlockSites.svelte";
+import Header from "$lib/components/Header.svelte";
+import BlockGroups from "$lib/components/BlockGroups.svelte";
+import BlockSites from "$lib/components/BlockSites.svelte";
 
 let selectedWebsiteGroup = "";
 let websiteGroups: Record<string, WebsiteBlockList>
@@ -30,11 +25,12 @@ const loadWebsiteGroups = async () => {
                 <div>
                         <h2 class="text-xl font-bold">Preferences</h2>
                         <Separator class="my-4" />
-                        <div class="grid grid-cols-[0.5fr_0.5fr]">
+                        <div class="grid grid-cols-[0.47fr_0.06fr_0.47fr]">
                                 <BlockGroups
                                   bind:selectedWebsiteGroup={selectedWebsiteGroup}
                                   bind:websiteGroups={websiteGroups}
                                 />
+                                <span class="flex"></span>
                                 <BlockSites
                                   bind:selectedWebsiteGroup={selectedWebsiteGroup}
                                   bind:websiteGroups={websiteGroups}

@@ -1,22 +1,13 @@
 <script lang="ts">
-import {Button} from "$lib/components/ui/button/index.js";
-import {ArrowBigLeft, Moon, Sun} from "lucide-svelte";
-import {toggleMode} from "mode-watcher";
-import {preloadData, goto} from "$app/navigation";
-import {onMount} from "svelte";
+  import {Button} from "$lib/components/ui/button/index.js";
+  import {ArrowBigLeft, Moon, Sun} from "lucide-svelte";
+  import {toggleMode} from "mode-watcher";
 
-let backPathname = ""
-onMount(() => (backPathname = document.referrer))
-
-const onLoad = async () => {
-  await preloadData(backPathname)
-}
-
-export let hasBack: boolean = false;
+  export let hasBack: boolean = false;
 </script>
-<div class="grid grid-cols-[0rem_1fr_0rem]" use:onLoad>
+<div class="grid grid-cols-[0rem_1fr_0rem]">
     {#if hasBack}
-        <Button variant="outline" class="flex content-center scale-100" size="icon" on:click={()=>goto(backPathname)}>
+        <Button variant="outline" class="flex content-center scale-100" size="icon" on:click={()=>window.history.back()}>
                 <ArrowBigLeft class="h-6 w-6" />
                 <span class="sr-only">Go back</span>
         </Button>
