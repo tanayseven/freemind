@@ -27,6 +27,7 @@
           {#if searchMatches(searchQuery, website.name)}
           <WebsiteListItem
             bind:website={website}
+            bind:selectedWebsiteGroup={selectedWebsiteGroup}
           />
           <Separator class="my-2" />
           {/if}

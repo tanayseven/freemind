@@ -1,25 +1,16 @@
 <script lang="ts">
-import {Separator} from "$lib/components/ui/separator";
-import {loadSettings, saveSettings, type WebsiteBlockList} from "../../settings";
-import Header from "$lib/components/Header.svelte";
-import BlockGroups from "$lib/components/BlockGroups.svelte";
-import BlockSites from "$lib/components/BlockSites.svelte";
+        import {Separator} from "$lib/components/ui/separator";
+        import {settingsStore} from "../../settings";
+        import Header from "$lib/components/Header.svelte";
+        import BlockGroups from "$lib/components/BlockGroups.svelte";
+        import BlockSites from "$lib/components/BlockSites.svelte";
 
-let selectedWebsiteGroup = "";
-let websiteGroups: Record<string, WebsiteBlockList>
+        let selectedWebsiteGroup = "";
 
-const loadWebsiteGroups = async () => {
-        console.log("loading website groups")
-        const settings = await loadSettings()
-        console.log(`website groups: ${JSON.stringify(settings.websiteBlockList)}`)
-        websiteGroups = settings.websiteBlockList
-        await saveSettings(settings)
-}
+  $: websiteGroups = $settingsStore.websiteBlockList;
 
 </script>
 <div class="container h-full p-0">
-        {#await loadWebsiteGroups()}
-        {:then _}
         <div class="container p-4 flex flex-col space-y-10">
                 <Header hasBack />
                 <div>
@@ -38,7 +29,4 @@ const loadWebsiteGroups = async () => {
                         </div>
                 </div>
         </div>
-        {:catch error}
-        <h3>Error loading website groups: {error}</h3>
-        {/await}
 </div>

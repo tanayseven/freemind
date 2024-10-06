@@ -1,5 +1,6 @@
 import {configDir} from "@tauri-apps/api/path";
 import {createDir, readTextFile, writeFile} from "@tauri-apps/api/fs";
+import {writable} from "svelte/store";
 
 const settingsDirectoryName = "tech.tanay.freemind";
 const settingsFileName = "settings.json";
@@ -78,7 +79,18 @@ const loadSettings = async (): Promise<Settings> => {
   return settings
 }
 
+const settingsStore = writable<Settings>(defaultSettings)
+
+loadSettings().then((settings) => {
+  settingsStore.set(settings)
+})
+
+settingsStore.subscribe(async (settings) => {
+  await saveSettings(settings)
+});
+
 export {
   saveSettings,
   loadSettings,
+  settingsStore
 }

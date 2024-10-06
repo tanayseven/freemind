@@ -2,13 +2,13 @@
 
   import {invoke} from '@tauri-apps/api/tauri';
   import {Button} from "$lib/components/ui/button";
-  import {Settings} from "lucide-svelte";
   import {Label} from "$lib/components/ui/label";
   import {Switch} from "$lib/components/ui/switch";
   import {Input} from "$lib/components/ui/input";
-  import {loadSettings, saveSettings} from "../settings";
+  import {settingsStore} from "../settings";
   import {goto} from "$app/navigation";
   import Header from "$lib/components/Header.svelte";
+  import {Settings as SettingsIcon} from "lucide-svelte";
 
   const hostsFile = '/etc/hosts';
   const possibleSubdomains = ["www", "news", "blog", "web"]
@@ -16,6 +16,12 @@
   const start = '#-freemind-blacklist-start-#';
   const end = '#-freemind-blacklist-end-#';
   const redirectUrl = '127.0.0.1';
+
+  let focusMode = false;
+  const secondsInMinute = 60;
+  let timerValue = 30;
+  let isTimerRunning = false;
+  let timeRemainingInSeconds = 0;
 
   const areSitesBlocked = (hostsFileContents: string) => {
     return hostsFileContents.includes(start) && hostsFileContents.includes(end);
@@ -107,12 +113,6 @@
     }
   }
 
-  let focusMode = false;
-  const secondsInMinute = 60;
-  let timerValue = 30;
-  let isTimerRunning = false;
-  let timeRemainingInSeconds = 0;
-
   const startTimer = () => {
     isTimerRunning = true;
     timeRemainingInSeconds = timerValue * secondsInMinute;
@@ -154,25 +154,9 @@
     }
   };
 
-  const onLoad = async () => {
-    focusMode = await isFocusEnabled();
-    const currentSettings = await loadSettings();
-    timerValue = currentSettings.timerValue;
-  }
-
-  const saveAllPreferences = async () => {
-    const currentSettings = await loadSettings();
-    console.log(`Current settings ${currentSettings}`)
-    const newSettings = {
-      ...currentSettings,
-      timerValue,
-    }
-    await saveSettings(newSettings);
-  }
-
 </script>
 
-<div class="container h-full p-0" use:onLoad>
+<div class="container h-full p-0">
   <div class="container p-4 flex flex-col space-y-10">
     <Header />
     {#await isRoot()}
@@ -194,7 +178,7 @@
     {/await}
     <div class="flex items-center justify-center">
       <Label for="till-date" class="text-xl mr-4">Focus for:</Label>
-      <Input id="till-date" type="number" bind:value={timerValue} class="w-20 py-6 text-xl" disabled={isTimerRunning} on:change={saveAllPreferences} />
+      <Input id="till-date" type="number" bind:value={$settingsStore.timerValue} class="w-20 py-6 text-xl" disabled={isTimerRunning} />
       <Label for="till-date" class="text-xl ml-2 mr-4">minutes</Label>
     </div>
     <div class="flex items-center justify-center">
@@ -202,7 +186,7 @@
     </div>
     <div class="flex items-center justify-end space-x-2">
       <Button variant="outline" class="text-xl" on:click={()=>goto('/preferences')}>
-        <Settings class="mr-2 h-6 w-6" />
+        <SettingsIcon class="mr-2 h-6 w-6" />
         Preferences
       </Button>
     </div>
