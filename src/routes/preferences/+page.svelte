@@ -1,22 +1,21 @@
 <script lang="ts">
 import {Button} from "$lib/components/ui/button";
-import {goto} from "$app/navigation";
-import {ArrowBigLeft, Moon, Sun} from "lucide-svelte";
-import {toggleMode} from "mode-watcher";
 import {Separator} from "$lib/components/ui/separator";
 import {ScrollArea} from "$lib/components/ui/scroll-area";
-import {loadSettings, saveSettings, type Website} from "../../settings";
+import {loadSettings, saveSettings, type WebsiteBlockList} from "../../settings";
 import {Checkbox} from "$lib/components/ui/checkbox";
 import Header from "$lib/components/Header.svelte";
+import WebsiteListItem from "$lib/components/WebsiteListItem.svelte";
 
 let selectedWebsiteGroup = "";
-let websiteGroups: Record<string, Website[]>
+let websiteGroups: Record<string, WebsiteBlockList>
 
 const loadWebsiteGroups = async () => {
         console.log("loading website groups")
         const settings = await loadSettings()
-        await saveSettings(settings)
+        console.log(`website groups: ${JSON.stringify(settings.websiteBlockList)}`)
         websiteGroups = settings.websiteBlockList
+        await saveSettings(settings)
 }
 
 </script>
@@ -36,15 +35,19 @@ const loadWebsiteGroups = async () => {
                                                         {#each Object.keys(websiteGroups) as websiteGroup}
                                                                 <div class="text-sm flex flex-row items-center justify-center">
                                                                         {#if selectedWebsiteGroup === websiteGroup}
-                                                                                <Button variant="ghost" class="w-4/5 flex" size="sm" disabled>
+                                                                                <Button variant="link" class="w-4/5 flex" size="sm" disabled>
+                                                                                        <span class:line-through={!websiteGroups[websiteGroup].enabled} class:text-secondary={!websiteGroups[websiteGroup].enabled}>
                                                                                         {websiteGroup}
+                                                                                        </span>
                                                                                 </Button>
-                                                                                <Checkbox id="" class="flex" aria-labelledby="" />
+                                                                                <Checkbox id="" class="flex" aria-labelledby="" bind:checked={websiteGroups[websiteGroup].enabled} />
                                                                         {:else}
-                                                                                <Button variant="ghost" class="w-4/5 flex" size="sm" on:click={() => selectedWebsiteGroup = websiteGroup}>
+                                                                                <Button variant="link" class="w-4/5 flex" size="sm" on:click={() => selectedWebsiteGroup = websiteGroup}>
+                                                                                        <span class:line-through={!websiteGroups[websiteGroup].enabled} class:text-secondary={!websiteGroups[websiteGroup].enabled}>
                                                                                         {websiteGroup}
+                                                                                        </span>
                                                                                 </Button>
-                                                                                <Checkbox id="" class="flex" aria-labelledby="" />
+                                                                                <Checkbox id="" class="flex" aria-labelledby="" bind:checked={websiteGroups[websiteGroup].enabled} />
                                                                         {/if}
                                                                 </div>
                                                                 <Separator class="my-2" />
@@ -57,11 +60,10 @@ const loadWebsiteGroups = async () => {
                                         {#if selectedWebsiteGroup !== ''}
                                         <ScrollArea  class="h-72 w-full rounded-md border">
                                                 <div class="p-4">
-                                                        {#each websiteGroups[selectedWebsiteGroup] as website}
-                                                                <div class="text-sm flex flex-row items-center justify-center">
-                                                                        <Button variant="ghost" class="w-4/5 flex line-through text-accent" size="sm">{website.name}</Button>
-                                                                        <Checkbox id="" class="flex" aria-labelledby="" bind:checked={website.enabled} />
-                                                                </div>
+                                                        {#each websiteGroups[selectedWebsiteGroup].websites as website }
+                                                                <WebsiteListItem
+                                                                  bind:website={website}
+                                                                />
                                                                 <Separator class="my-2" />
                                                         {/each}
                                                 </div>
@@ -71,5 +73,7 @@ const loadWebsiteGroups = async () => {
                         </div>
                 </div>
         </div>
+        {:catch error}
+        <h3>Error loading website groups: {error}</h3>
         {/await}
 </div>

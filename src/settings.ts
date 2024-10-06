@@ -9,20 +9,41 @@ export type Website = {
   enabled: boolean,
 }
 
+export type WebsiteBlockList = {
+  enabled: boolean,
+  websites: Website[]
+}
+
 export type Settings = {
   timerValue: number,
-  websiteBlockList: Record<string, Website[]>
+  websiteBlockList: Record<string, WebsiteBlockList>
 }
 
 const defaultSettings: Settings = {
   timerValue: 25,
   websiteBlockList: {
-    "Social Media": [{name: "facebook.com", enabled: true}, {name: "twitter.com", enabled: true}, {name: "instagram.com", enabled: true}],
-    "Shopping": [{name: "amazon.com", enabled: true}, {name: "flipkart.com", enabled: true}],
-    "Work": [{name: "slack.com", enabled: true}, {name: "github.com", enabled: true}],
-    "News": [{name: "nytimes.com", enabled: true}, {name: "cnn.com", enabled: true}],
-    "Entertainment": [{name: "netflix.com", enabled: true}, {name: "youtube.com", enabled: true}],
-    "Games": [{name: "steam.com", enabled: true}, {name: "epicgames.com", enabled: true}],
+    "Social Media": {
+      enabled: true, websites: [
+        {name: "facebook.com", enabled: true},
+        {name: "twitter.com", enabled: true},
+        {name: "instagram.com", enabled:true}
+      ]
+    },
+    "Shopping": {
+      enabled: true, websites: [{name: "amazon.com", enabled: true}, {name: "flipkart.com", enabled: true}]
+    },
+    "Work": {
+      enabled: true, websites: [{name: "slack.com", enabled: true}, {name: "github.com", enabled: true}]
+    },
+    "News": {
+      enabled: true, websites: [{name: "nytimes.com", enabled: true}, {name: "cnn.com", enabled: true}]
+    },
+    "Entertainment": {
+      enabled: true, websites: [{name: "netflix.com", enabled: true}, {name: "youtube.com", enabled: true}]
+    },
+    "Games": {
+      enabled: true, websites: [{name: "steam.com", enabled: true}, {name: "epicgames.com", enabled: true}]
+    },
   }
 }
 
@@ -47,8 +68,7 @@ const loadSettings = async (): Promise<Settings> => {
   const settingsPath = `${configBase}${settingsDirectoryName}/${settingsFileName}`;
   try {
     await readTextFile(settingsPath);
-  }
-  catch (e) {
+  } catch (e) {
     await saveSettings(defaultSettings);
     return defaultSettings;
   }
