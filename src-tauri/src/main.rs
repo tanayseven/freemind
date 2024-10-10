@@ -73,37 +73,44 @@ fn restart_network() -> Result<(), String> {
 
     #[cfg(target_os = "linux")]
     {
+        let result: Result::<(), String> = Ok(());
         let output = Command::new("/etc/init.d/networking")
             .arg("restart")
             .output()
             .map_err(|e| format!("Failed to command to restart network: {}", e))?;
         if output.status.success() {
-            Ok(())
+            result = Ok(());
         } else {
-            Err(format!("Failed to restart network: {}", String::from_utf8_lossy(&output.stderr)))
+            result = Err(format!("Failed to restart network: {}", String::from_utf8_lossy(&output.stderr)));
         }
-//         let output = Command::new("/etc/init.d/nscd")
-//             .arg("restart")
-//             .output()
-//             .map_err(|e| format!("Failed to command to restart network: {}", e))?;
-//         if output.status.success() {
-//             Ok(())
-//         } else {
-//             Err(format!("Failed to restart network: {}", String::from_utf8_lossy(&output.stderr)))
-//         }
-//         let output = Command::new("/etc/rc.d/nscd")
-//             .arg("restart")
-//             .output()
-//             .map_err(|e| format!("Failed to command to restart network: {}", e))?;
-//         if output.status.success() {
-//             Ok(())
-//         } else {
-//             Err(format!("Failed to restart network: {}", String::from_utf8_lossy(&output.stderr)))
-//         }
-//         let output = Command::new("/etc/rc.d/init.d/nscd")
-//             .arg("restart")
-//             .output()
-//             .map_err(|e| format!("Failed to command to restart network: {}", e))?;
+        let output = Command::new("/etc/init.d/nscd")
+            .arg("restart")
+            .output()
+            .map_err(|e| format!("Failed to command to restart network: {}", e))?;
+        if output.status.success() {
+            result = Ok(());
+        } else {
+            result = Err(format!("Failed to restart network: {}", String::from_utf8_lossy(&output.stderr)));
+        }
+        let output = Command::new("/etc/rc.d/nscd")
+            .arg("restart")
+            .output()
+            .map_err(|e| format!("Failed to command to restart network: {}", e))?;
+        if output.status.success() {
+            result = Ok(());
+        } else {
+            result = Err(format!("Failed to restart network: {}", String::from_utf8_lossy(&output.stderr)));
+        }
+        let output = Command::new("/etc/rc.d/init.d/nscd")
+            .arg("restart")
+            .output()
+            .map_err(|e| format!("Failed to command to restart network: {}", e))?;
+        if output.status.success() {
+            result = Ok(());
+        } else {
+            result = Err(format!("Failed to restart network: {}", String::from_utf8_lossy(&output.stderr)));
+        }
+        result
     }
 
     #[cfg(target_os = "windows")]
