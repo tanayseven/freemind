@@ -12,6 +12,7 @@
   import Header from "$lib/components/Header.svelte";
   import {Settings as SettingsIcon} from "lucide-svelte";
   import {areSitesBlocked, isFocusEnabled, startFocus, stopFocus} from "$lib/focus";
+  import {onMount} from "svelte";
 
   let focusMode = false;
   const secondsInMinute = 60;
@@ -19,6 +20,13 @@
   let isTimerRunning = false;
   let timeRemainingInSeconds = 0;
 
+  onMount(() => {
+    setInterval(() => {
+      areSitesBlocked().then((enabled) => {
+        focusMode = enabled;
+      });
+    }, 100);
+  });
 
   type TimeRemaining = {
     minutes: number;
@@ -47,11 +55,27 @@
     }, 1000);
   }
 
+  const waitingTimeoutInSeconds = 15;
+  const millisecondsInSecond = 1000;
+
+  let showStoppingOverlay = false;
+  let showOverlayTimeRemaining: number = 0;
+  let stopFocusTimeout: NodeJS.Timeout = setTimeout(() => {}, 0);
+  let stopFocusIntervalCounter: NodeJS.Timeout = setInterval(() => {}, 0);
+
   const toggleFocus = async () => {
     console.log("Toggling focus time")
     try {
       if (await isFocusEnabled()) {
-        await stopFocus();
+        showStoppingOverlay = true;
+        showOverlayTimeRemaining = waitingTimeoutInSeconds * millisecondsInSecond;
+        stopFocusIntervalCounter = setInterval(() => {
+          showOverlayTimeRemaining -= 100;
+        }, 100);
+        stopFocusTimeout = setTimeout(async () => {
+          showStoppingOverlay = false;
+          await stopFocus();
+        }, waitingTimeoutInSeconds * millisecondsInSecond);
       } else {
         await startFocus();
       }
@@ -72,9 +96,35 @@
     }
   };
 
+  const continueFocus = async () => {
+    showStoppingOverlay = false;
+    clearTimeout(stopFocusTimeout);
+    clearInterval(stopFocusIntervalCounter);
+    await startFocus();
+  }
+
 </script>
 
 <div class="container h-full p-0">
+  {#if (showStoppingOverlay && focusMode)}
+  <div class="w-full h-full gap-y-10 absolute flex flex-col backdrop-blur-xl">
+    <h2 class="flex text-center justify-center w-full text-5xl mt-10">
+      Ending Focus Mode?
+    </h2>
+    <h3 class="flex text-center justify-center w-full text-4xl">
+      Take a few deep breaths
+    </h3>
+    <h3 class="flex text-center justify-center w-full text-4xl">
+      Are you sure you want to stop focus time?
+    </h3>
+    <h3 class="flex text-center justify-center w-full text-4xl">
+      {Math.ceil(showOverlayTimeRemaining / 1000)} seconds
+    </h3>
+    <div class="flex justify-center w-full">
+      <Button variant="outline" class="w-fit" on:click={continueFocus}>Continue Focus!</Button>
+    </div>
+  </div>
+  {/if}
   <div class="container p-4 flex flex-col space-y-10">
     <Header />
     {#await isRoot()}
@@ -89,7 +139,7 @@
       {/if}
       <div class="flex items-center justify-center space-x-2">
         <Switch id="focus-mode" on:click={toggleFocus} disabled={!isRoot} bind:checked={focusMode} />
-        <Label class="justify-center text-xl" for="focus-mode">Focus Mode</Label>
+        <Label class="justify-center text-xl hover:cursor-pointer" for="focus-mode">Focus Mode</Label>
       </div>
     {:catch error}
       <h3>Error checking elevated privileges: {error}</h3>
@@ -119,7 +169,6 @@
     </div>
     <div class="grow"></div>
     <div class="flex items-center justify-end">
-
           <span class="text-muted-foreground text-m">
             Made with
             <Tooltip.Root>

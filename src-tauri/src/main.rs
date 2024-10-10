@@ -136,15 +136,15 @@ fn main() {
 
     tauri::Builder::default()
 // TODO: Uncomment the following to start in debug mode
-//         .setup(|app| {
-//             info!("Tauri setup complete");
-//             #[cfg(debug_assertions)]
-//             {
-//                 let window = app.get_window("main").unwrap();
-//                 window.open_devtools();
-//             }
-//             Ok(())
-//         })
+        .setup(|app| {
+            info!("Tauri setup complete");
+            #[cfg(debug_assertions)]
+            {
+                let window = app.get_window("main").unwrap();
+                window.open_devtools();
+            }
+            Ok(())
+        })
         .on_window_event(|event| {
             if let WindowEvent::CloseRequested { api, .. } = event.event() {
                 api.prevent_close();
