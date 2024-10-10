@@ -73,7 +73,7 @@ fn restart_network() -> Result<(), String> {
 
     #[cfg(target_os = "linux")]
     {
-        let result: Result::<(), String> = Ok(());
+        let mut result: Result::<(), String> = Ok(());
         let output = Command::new("/etc/init.d/networking")
             .arg("restart")
             .output()
