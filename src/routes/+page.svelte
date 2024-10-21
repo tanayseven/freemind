@@ -75,6 +75,8 @@
         stopFocusTimeout = setTimeout(async () => {
           showStoppingOverlay = false;
           await stopFocus();
+          clearInterval(stopFocusTimeout);
+          clearInterval(stopFocusIntervalCounter);
         }, waitingTimeoutInSeconds * millisecondsInSecond);
       } else {
         await startFocus();
