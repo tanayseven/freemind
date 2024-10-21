@@ -5,15 +5,14 @@
   import {Label} from "$lib/components/ui/label";
   import {Switch} from "$lib/components/ui/switch";
   import {Input} from "$lib/components/ui/input";
-  import * as Tooltip from "$lib/components/ui/tooltip";
-  import {Badge} from "$lib/components/ui/badge";
   import {settingsStore} from "$lib/settings";
   import {goto} from "$app/navigation";
   import Header from "$lib/components/Header.svelte";
   import {Settings as SettingsIcon} from "lucide-svelte";
-  import {areSitesBlocked, isFocusEnabled, startFocus, stopFocus} from "$lib/focus";
+  import {areSitesBlocked, isFocusEnabled, startFocus, stopFocus, type TimeRemaining} from "$lib/focus";
   import {onMount} from "svelte";
   import {Progress} from "$lib/components/ui/progress";
+  import Footer from "$lib/components/Footer.svelte";
 
   let focusMode = false;
   const secondsInMinute = 60;
@@ -28,11 +27,6 @@
       });
     }, 100);
   });
-
-  type TimeRemaining = {
-    minutes: number;
-    seconds: number;
-  }
 
   const timeRemaining: TimeRemaining = {
     minutes: 0,
@@ -123,13 +117,12 @@
       Ending Focus Mode?
     </h2>
     <h3 class="flex text-center justify-center w-full text-4xl">
-      Take a few deep breaths
+      Take a few deep breaths and think
     </h3>
     <h3 class="flex text-center justify-center w-full text-4xl">
       Are you sure you want to stop focus time?
     </h3>
     <h3 class="flex text-center justify-center w-full text-4xl">
-
       <Progress value={Math.ceil(showOverlayTimeRemaining)} max={15000} class="w-[60%]" />
     </h3>
     <div class="flex justify-center w-full">
@@ -171,40 +164,9 @@
       </Button>
     </div>
   </div>
-  <div class="absolute bottom-0 flex w-full px-2 py-2">
-    <div class="flex items-center flex-initial">
-      <Label for="time-remaining" class="text-m ml-2 mr-4">Time remaining:</Label>
-      <span id="time-remaining" class="text-muted-foreground text-m w-5 text-center">{timeRemaining.minutes}</span>
-      <Label for="time-remaining" class="text-m ml-2 mr-4">minutes</Label>
-      <span id="time-remaining" class="text-muted-foreground text-m w-5 text-center">{timeRemaining.seconds}</span>
-      <Label for="time-remaining" class="text-m ml-2 mr-4">seconds</Label>
-    </div>
-    <div class="grow"></div>
-    <div class="flex items-center justify-end">
-          <span class="text-muted-foreground text-m">
-            Made with
-            <Tooltip.Root>
-            <Tooltip.Trigger class="hover:cursor-help">
-              <Badge variant="outline">❤️</Badge>
-            </Tooltip.Trigger>
-            <Tooltip.Content>
-              <p>love</p>
-            </Tooltip.Content>
-            </Tooltip.Root>
-            and
-            <Tooltip.Root>
-            <Tooltip.Trigger class="hover:cursor-help">
-              <Badge variant="outline">😓</Badge>
-            </Tooltip.Trigger>
-            <Tooltip.Content>
-              <p>sweat</p>
-            </Tooltip.Content>
-            </Tooltip.Root>
-            by
-            <a href="https://github.com/tanayseven/" target="_blank" class="text-blue-500">Tanay</a></span>
-
-    </div>
-  </div>
+  <Footer
+    timeRemaining={timeRemaining}
+  />
 </div>
 
 <style>

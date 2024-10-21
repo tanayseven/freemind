@@ -4,6 +4,7 @@
         import Header from "$lib/components/Header.svelte";
         import BlockGroups from "$lib/components/BlockGroups.svelte";
         import BlockSites from "$lib/components/BlockSites.svelte";
+        import Footer from "$lib/components/Footer.svelte";
 
         let selectedWebsiteGroup = "";
 
@@ -29,4 +30,5 @@
                         </div>
                 </div>
         </div>
+        <Footer />
 </div>

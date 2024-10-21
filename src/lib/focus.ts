@@ -9,6 +9,11 @@ const start = '#-freemind-blacklist-start-#';
 const end = '#-freemind-blacklist-end-#';
 const redirectUrl = '127.0.0.1';
 
+export type TimeRemaining = {
+  minutes: number;
+  seconds: number;
+}
+
 export const areSitesBlocked = async () => {
   const hostsFileContents: string = await invoke('read_file_contents', { filePath: hostsFile });
   return hostsFileContents.includes(start) && hostsFileContents.includes(end);
