@@ -13,6 +13,7 @@
   import {Settings as SettingsIcon} from "lucide-svelte";
   import {areSitesBlocked, isFocusEnabled, startFocus, stopFocus} from "$lib/focus";
   import {onMount} from "svelte";
+  import {Progress} from "$lib/components/ui/progress";
 
   let focusMode = false;
   const secondsInMinute = 60;
@@ -62,6 +63,14 @@
   let showOverlayTimeRemaining: number = 0;
   let stopFocusTimeout: NodeJS.Timeout = setTimeout(() => {}, 0);
   let stopFocusIntervalCounter: NodeJS.Timeout = setInterval(() => {}, 0);
+
+  window.addEventListener('blur', async () => {
+    if (focusMode) {
+      showStoppingOverlay = false;
+      clearInterval(stopFocusTimeout);
+      clearInterval(stopFocusIntervalCounter);
+    }
+  });
 
   const toggleFocus = async () => {
     console.log("Toggling focus time")
@@ -120,7 +129,8 @@
       Are you sure you want to stop focus time?
     </h3>
     <h3 class="flex text-center justify-center w-full text-4xl">
-      {Math.ceil(showOverlayTimeRemaining / 1000)} seconds
+
+      <Progress value={Math.ceil(showOverlayTimeRemaining)} max={15000} class="w-[60%]" />
     </h3>
     <div class="flex justify-center w-full">
       <Button variant="outline" class="w-fit" on:click={continueFocus}>Continue Focus!</Button>
