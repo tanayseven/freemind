@@ -1,10 +1,10 @@
 <script lang="ts">
-  import { Separator } from "$lib/components/ui/separator/index.js"
   import { Input } from "$lib/components/ui/input/index.js"
-  import WebsiteGroupItem from "$lib/components/WebsiteGroupItem.svelte"
-  import { Search } from "lucide-svelte"
   import { ScrollArea } from "$lib/components/ui/scroll-area/index.js"
+  import { Search } from "lucide-svelte"
+  import { Separator } from "$lib/components/ui/separator/index.js"
   import type { WebsiteBlockList } from "../settings"
+  import WebsiteGroupItem from "$lib/components/WebsiteGroupItem.svelte"
 
   export let selectedWebsiteGroup = ""
   export let websiteGroups: Record<string, WebsiteBlockList>

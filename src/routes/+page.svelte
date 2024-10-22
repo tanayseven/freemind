@@ -1,17 +1,17 @@
 <script lang="ts">
-  import { invoke } from "@tauri-apps/api/tauri"
+  import { type TimeRemaining, areSitesBlocked, isFocusEnabled, startFocus, stopFocus } from "$lib/focus"
   import { Button } from "$lib/components/ui/button"
-  import { Label } from "$lib/components/ui/label"
-  import { Switch } from "$lib/components/ui/switch"
-  import { Input } from "$lib/components/ui/input"
-  import { settingsStore } from "$lib/settings"
-  import { goto } from "$app/navigation"
-  import Header from "$lib/components/Header.svelte"
-  import { Settings as SettingsIcon } from "lucide-svelte"
-  import { areSitesBlocked, isFocusEnabled, startFocus, stopFocus, type TimeRemaining } from "$lib/focus"
-  import { onMount } from "svelte"
-  import { Progress } from "$lib/components/ui/progress"
   import Footer from "$lib/components/Footer.svelte"
+  import Header from "$lib/components/Header.svelte"
+  import { Input } from "$lib/components/ui/input"
+  import { Label } from "$lib/components/ui/label"
+  import { Progress } from "$lib/components/ui/progress"
+  import { Settings as SettingsIcon } from "lucide-svelte"
+  import { Switch } from "$lib/components/ui/switch"
+  import { goto } from "$app/navigation"
+  import { invoke } from "@tauri-apps/api/tauri"
+  import { onMount } from "svelte"
+  import { settingsStore } from "$lib/settings"
 
   let focusMode = false
   const secondsInMinute = 60

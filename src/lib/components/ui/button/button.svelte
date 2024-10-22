@@ -1,21 +1,22 @@
 <script lang="ts">
-  import { Button as ButtonPrimitive } from "bits-ui"
   import { type Events, type Props, buttonVariants } from "./index.js"
+  import { Button as ButtonPrimitive } from "bits-ui"  // eslint-disable-line
   import { cn } from "$lib/utils.js"
 
   type $$Props = Props
   type $$Events = Events
 
   let className: $$Props["class"] = undefined
-  export let variant: $$Props["variant"] = "default"
-  export let size: $$Props["size"] = "default"
+
   export let builders: $$Props["builders"] = []
   export { className as class }
+  export let size: $$Props["size"] = "default"
+  export let variant: $$Props["variant"] = "default"
 </script>
 
 <ButtonPrimitive.Root
   {builders}
-  class={cn(buttonVariants({ variant, size, className }))}
+  class={cn(buttonVariants({ className, size, variant }))}
   type="button"
   {...$$restProps}
   on:click

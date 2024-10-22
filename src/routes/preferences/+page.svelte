@@ -1,10 +1,10 @@
 <script lang="ts">
-  import { Separator } from "$lib/components/ui/separator"
-  import { settingsStore } from "$lib/settings"
-  import Header from "$lib/components/Header.svelte"
   import BlockGroups from "$lib/components/BlockGroups.svelte"
   import BlockSites from "$lib/components/BlockSites.svelte"
   import Footer from "$lib/components/Footer.svelte"
+  import Header from "$lib/components/Header.svelte"
+  import { Separator } from "$lib/components/ui/separator"
+  import { settingsStore } from "$lib/settings"
 
   let selectedWebsiteGroup = ""
 

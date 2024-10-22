@@ -4,10 +4,10 @@
 
   let className: string | undefined | null = undefined
   export let href: string | undefined = undefined
-  export let variant: Variant = "default"
   export { className as class }
+  export let variant: Variant = "default"
 </script>
 
-<svelte:element this={href ? "a" : "span"} {href} class={cn(badgeVariants({ variant, className }))} {...$$restProps}>
+<svelte:element this={href ? "a" : "span"} {href} class={cn(badgeVariants({ className, variant }))} {...$$restProps}>
   <slot />
 </svelte:element>

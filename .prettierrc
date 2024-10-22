@@ -5,6 +5,7 @@
   "tabWidth": 2,
   "trailingComma": "all",
   "bracketSpacing": true,
+  "sortImports": true,
   "plugins": ["prettier-plugin-svelte", "prettier-plugin-tailwindcss"],
   "overrides": [{ "files": "*.svelte", "options": { "parser": "svelte" } }]
 }

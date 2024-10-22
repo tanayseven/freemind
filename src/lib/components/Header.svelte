@@ -1,6 +1,6 @@
 <script lang="ts">
-  import { Button } from "$lib/components/ui/button/index.js"
   import { ArrowBigLeft, Moon, Sun } from "lucide-svelte"
+  import { Button } from "$lib/components/ui/button/index.js"
   import { toggleMode } from "mode-watcher"
 
   export let hasBack: boolean = false
