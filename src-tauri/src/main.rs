@@ -4,6 +4,7 @@
 use log::{info};
 use tauri::Manager;
 use std::process::Command;
+use std::path::PathBuf;
 use tauri::{SystemTray, SystemTrayEvent, SystemTrayMenuItem, CustomMenuItem, SystemTrayMenu, WindowEvent};
 
 
@@ -13,16 +14,50 @@ fn is_running_as_admin() -> bool {
 }
 
 #[cfg(target_os = "macos")]
+fn get_executable_name(path: &PathBuf) -> String {
+    path.file_name()
+        .unwrap_or_default()
+        .to_string_lossy()
+        .to_string()
+}
+
+#[cfg(target_os = "macos")]
+fn get_app_path(executable_path: &PathBuf) -> String {
+    let is_dev = executable_path.to_string_lossy().contains("debug");
+
+    if is_dev {
+        format!(
+            "{}/debug/{}",
+            executable_path.parent().unwrap().parent().unwrap().display(),
+            get_executable_name(executable_path)
+        )
+    } else {
+        format!(
+            "{}/Contents/MacOS/{}",
+            executable_path.parent().unwrap().parent().unwrap().parent().unwrap().display(),
+            get_executable_name(executable_path)
+        )
+    }
+}
+
+#[cfg(target_os = "macos")]
 fn restart_as_admin() -> Result<(), String> {
+    // Skip elevation check if already running as admin
+    if is_running_as_admin() {
+        return Ok(());
+    }
+
     let executable_path = std::env::current_exe()
         .map_err(|e| e.to_string())?;
+
+    let app_path = get_app_path(&executable_path);
+
+    println!("Attempting to restart with path: {}", app_path); // Debug log
 
     let status = Command::new("osascript")
         .arg("-e")
         .arg(format!(
-            "do shell script \"'{}/debug/{}' --elevated\" with administrator privileges",
-            executable_path.parent().unwrap().parent().unwrap().display(),
-            executable_path.file_name().unwrap().to_string_lossy()
+            "do shell script \"'{app_path}' --elevated\" with administrator privileges",
         ))
         .status()
         .map_err(|e| e.to_string())?;
@@ -160,11 +195,9 @@ fn main() {
     {
         // Skip elevation check if --elevated flag is present to avoid infinite loop
         if !std::env::args().any(|arg| arg == "--elevated") {
-            if !is_running_as_admin() {
-                if let Err(e) = restart_as_admin() {
-                    eprintln!("Failed to obtain administrator privileges: {}", e);
-                    std::process::exit(1);
-                }
+            if let Err(e) = restart_as_admin() {
+                eprintln!("Failed to restart with admin privileges: {}", e);
+                std::process::exit(1);
             }
         }
     }
@@ -178,7 +211,6 @@ fn main() {
     let system_tray = SystemTray::new().with_menu(tray_menu);
 
     tauri::Builder::default()
-// TODO: Uncomment the following to start in debug mode
         .setup(|app| {
             info!("Tauri setup complete");
             #[cfg(debug_assertions)]
