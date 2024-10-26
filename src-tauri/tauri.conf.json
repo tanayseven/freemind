@@ -58,6 +58,31 @@
       "active": true,
       "targets": "all",
       "identifier": "tech.tanay.freemind",
+      "category": "Productivity",
+      "shortDescription": "",
+      "longDescription": "",
+      "deb": {
+        "depends": [],
+        "files": {
+          "/usr/share/polkit-1/actions/tech.tanay.freemind.policy": "assets/tech.tanay.freemind.policy"
+        }
+      },
+      "macOS": {
+        "frameworks": [],
+        "minimumSystemVersion": "",
+        "exceptionDomain": "",
+        "signingIdentity": null,
+        "entitlements": "assets/entitlements.plist"
+      },
+      "windows": {
+        "certificateThumbprint": null,
+        "digestAlgorithm": "sha256",
+        "timestampUrl": "",
+        "wix": {
+          "language": "en-US",
+          "template": "assets/main.wxs"
+        }
+      },
       "icon": [
         "icons/32x32.png",
         "icons/128x128.png",

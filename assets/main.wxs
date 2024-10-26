@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
+    <Product Id="*" Name="Free Mind" Language="1033" Version="1.0.0.0" Manufacturer="Tanay PrabhuDesai" UpgradeCode="649a1fef-78ab-469a-ab9b-a6171fd70c7e">
+        <Package InstallerVersion="200" Compressed="yes" InstallScope="perMachine" Platform="x64"/>
+        <MajorUpgrade DowngradeErrorMessage="A newer version of Free Mind is already installed."/>
+        <MediaTemplate EmbedCab="yes"/>
+        <Feature Id="ProductFeature" Title="Free Mind" Level="1">
+            <ComponentGroupRef Id="ProductComponents"/>
+        </Feature>
+    </Product>
+</Wix>
