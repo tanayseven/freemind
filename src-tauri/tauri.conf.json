@@ -6,7 +6,7 @@
     "distDir": "../build"
   },
   "package": {
-    "productName": "free-mind",
+    "productName": "freemind",
     "version": "0.0.0"
   },
   "plugins": {
@@ -52,7 +52,7 @@
       }
     ],
     "security": {
-      "csp": null
+      "csp": "default-src 'self' 'unsafe-eval' 'unsafe-inline' data: tauri:"
     },
     "bundle": {
       "active": true,
@@ -68,10 +68,12 @@
         }
       },
       "macOS": {
+        "exceptionDomain": "",
+        "providerShortName": null,
+        "signingIdentity": null,
         "frameworks": [],
         "minimumSystemVersion": "",
-        "exceptionDomain": "",
-        "signingIdentity": null,
+        "license": null,
         "entitlements": "assets/entitlements.plist"
       },
       "windows": {

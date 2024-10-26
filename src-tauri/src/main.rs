@@ -4,7 +4,35 @@
 use log::{info};
 use tauri::Manager;
 use std::process::Command;
-use tauri::{SystemTray, SystemTrayEvent, CustomMenuItem, SystemTrayMenu, WindowEvent};
+use tauri::{SystemTray, SystemTrayEvent, SystemTrayMenuItem, CustomMenuItem, SystemTrayMenu, WindowEvent};
+
+
+#[cfg(target_os = "macos")]
+fn is_running_as_admin() -> bool {
+    unsafe { libc::geteuid() == 0 }
+}
+
+#[cfg(target_os = "macos")]
+fn restart_as_admin() -> Result<(), String> {
+    let executable_path = std::env::current_exe()
+        .map_err(|e| e.to_string())?;
+
+    let status = Command::new("osascript")
+        .arg("-e")
+        .arg(format!(
+            "do shell script \"'{}/debug/{}' --elevated\" with administrator privileges",
+            executable_path.parent().unwrap().parent().unwrap().display(),
+            executable_path.file_name().unwrap().to_string_lossy()
+        ))
+        .status()
+        .map_err(|e| e.to_string())?;
+
+    if !status.success() {
+        return Err("Failed to restart with administrator privileges".to_string());
+    }
+
+    std::process::exit(0);
+}
 
 #[tauri::command]
 fn is_elevated() -> Result<bool, String> {
@@ -128,7 +156,22 @@ fn restart_network() -> Result<(), String> {
 }
 
 fn main() {
+    #[cfg(target_os = "macos")]
+    {
+        // Skip elevation check if --elevated flag is present to avoid infinite loop
+        if !std::env::args().any(|arg| arg == "--elevated") {
+            if !is_running_as_admin() {
+                if let Err(e) = restart_as_admin() {
+                    eprintln!("Failed to obtain administrator privileges: {}", e);
+                    std::process::exit(1);
+                }
+            }
+        }
+    }
+
     let tray_menu = SystemTrayMenu::new()
+        .add_item(CustomMenuItem::new("title", "Free Mind").disabled())
+        .add_native_item(SystemTrayMenuItem::Separator)
         .add_item(CustomMenuItem::new("show", "Show"))
         .add_item(CustomMenuItem::new("quit", "Quit"));
 
@@ -136,15 +179,15 @@ fn main() {
 
     tauri::Builder::default()
 // TODO: Uncomment the following to start in debug mode
-//         .setup(|app| {
-//             info!("Tauri setup complete");
-//             #[cfg(debug_assertions)]
-//             {
-//                 let window = app.get_window("main").unwrap();
-//                 window.open_devtools();
-//             }
-//             Ok(())
-//         })
+        .setup(|app| {
+            info!("Tauri setup complete");
+            #[cfg(debug_assertions)]
+            {
+                let window = app.get_window("main").unwrap();
+                window.open_devtools();
+            }
+            Ok(())
+        })
         .on_window_event(|event| {
             if let WindowEvent::CloseRequested { api, .. } = event.event() {
                 api.prevent_close();

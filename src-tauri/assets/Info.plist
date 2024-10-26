@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <!-- Your existing Info.plist entries -->
+    <key>SMPrivilegedExecutables</key>
+    <dict>
+        <key>tech.tanay.freemind.helper</key>
+        <string>identifier "tech.tanay.freemind.helper" and anchor apple generic and certificate leaf[subject.CN] = "Apple Development: Tanay PrabhuDesai (XXXXXXXXXX)"</string>
+    </dict>
+</dict>
+</plist>

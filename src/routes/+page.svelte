@@ -88,14 +88,10 @@
     }
   }
 
-  const isRoot = async () => {
+  const isRoot = async (): Promise<boolean> => {
     try {
-      console.log("Checking if root...")
-      const isElevated = await invoke("is_elevated")
-      console.log("Is elevated: ", isElevated)
-      return isElevated as boolean
+      return (await invoke("is_elevated")) as boolean
     } catch (error) {
-      console.error("Error checking elevated privileges:", error)
       return false
     }
   }
