@@ -1,7 +1,7 @@
 <script lang="ts">
-  import Check from "lucide-svelte/icons/check"
+  import { IconCheck as Check } from "@tabler/icons-svelte"
   import { Checkbox as CheckboxPrimitive } from "bits-ui"
-  import Minus from "lucide-svelte/icons/minus"
+  import { IconMinus as Minus } from "@tabler/icons-svelte"
   import { cn } from "$lib/utils.js"
 
   type $$Props = CheckboxPrimitive.Props

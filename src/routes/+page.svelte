@@ -3,10 +3,10 @@
   import { Button } from "$lib/components/ui/button"
   import Footer from "$lib/components/Footer.svelte"
   import Header from "$lib/components/Header.svelte"
+  import { IconSettings } from "@tabler/icons-svelte"
   import { Input } from "$lib/components/ui/input"
   import { Label } from "$lib/components/ui/label"
   import { Progress } from "$lib/components/ui/progress"
-  import { Settings as SettingsIcon } from "lucide-svelte"
   import { Switch } from "$lib/components/ui/switch"
   import { goto } from "$app/navigation"
   import { invoke } from "@tauri-apps/api/tauri"
@@ -153,7 +153,7 @@
     </div>
     <div class="flex items-center justify-end space-x-2">
       <Button variant="outline" class="text-xl" on:click={() => goto("/preferences")}>
-        <SettingsIcon class="mr-2 h-6 w-6" />
+        <IconSettings class="mr-2 h-6 w-6" />
         Preferences
       </Button>
     </div>

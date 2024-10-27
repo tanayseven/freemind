@@ -1,7 +1,7 @@
 <script lang="ts">
+  import { IconSearch } from "@tabler/icons-svelte"
   import { Input } from "$lib/components/ui/input/index.js"
   import { ScrollArea } from "$lib/components/ui/scroll-area/index.js"
-  import { Search } from "lucide-svelte"
   import { Separator } from "$lib/components/ui/separator/index.js"
   import type { WebsiteBlockList } from "../settings"
   import WebsiteListItem from "$lib/components/WebsiteListItem.svelte"
@@ -21,7 +21,7 @@
   >
   {#if selectedWebsiteGroup !== ""}
     <div class="flex items-center gap-4">
-      <Search class="flex flex-initial" />
+      <IconSearch class="flex flex-initial" />
       <Input class="flex" bind:value={searchQuery} />
     </div>
     <ScrollArea class="h-72 w-full rounded-md border">
