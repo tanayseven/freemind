@@ -82,7 +82,7 @@ jobs:
         if: matrix.platform == 'ubuntu-20.04'
         run: |
           sudo mkdir -p /usr/share/polkit-1/actions
-          echo '${{ secrets.POLKIT_POLICY }}' | sudo tee /usr/share/polkit-1/actions/com.yourdomain.app.policy
+          echo '${{ secrets.POLKIT_POLICY }}' | sudo tee /usr/share/polkit-1/actions/tech.tanay.freemind.policy
 
       - uses: tauri-apps/tauri-action@v0
         env:
