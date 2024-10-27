@@ -61,12 +61,6 @@
       "category": "Productivity",
       "shortDescription": "",
       "longDescription": "",
-      "deb": {
-        "depends": [],
-        "files": {
-          "usr/share/polkit-1/actions/tech.tanay.freemind.policy": "src-tauri/assets/tech.tanay.freemind.policy"
-        }
-      },
       "macOS": {
         "exceptionDomain": "",
         "providerShortName": null,
@@ -75,15 +69,6 @@
         "minimumSystemVersion": "",
         "license": null,
         "entitlements": "src-tauri/assets/entitlements.plist"
-      },
-      "windows": {
-        "certificateThumbprint": null,
-        "digestAlgorithm": "sha256",
-        "timestampUrl": "",
-        "wix": {
-          "language": "en-US",
-          "template": "src-tauri/assets/main.wxs"
-        }
       },
       "icon": [
         "icons/32x32.png",
