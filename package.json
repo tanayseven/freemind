@@ -12,10 +12,10 @@
     "tauri": "tauri",
     "lint": "eslint .",
     "lint:fix": "eslint --fix .",
-    "test": "vitest",
+    "test": "vitest --run",
     "test:ui": "vitest --ui",
     "test:coverage": "vitest run --coverage",
-    "test:watch": "vitest watch",
+    "test:watch": "vitest",
     "prepare": "husky"
   },
   "license": "MIT",

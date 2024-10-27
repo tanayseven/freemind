@@ -19,7 +19,7 @@
   {/if}
   <div class="grow"></div>
   <div class="flex items-center justify-end">
-    <span class="text-m text-muted-foreground">
+    <span class="text-m text-muted-foreground" data-testid="created-by-tanay">
       Made with
       <Tooltip.Root>
         <Tooltip.Trigger class="hover:cursor-help">
