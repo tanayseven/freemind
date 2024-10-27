@@ -1,6 +1,7 @@
 import { defineConfig } from "vite";
 import { sveltekit } from "@sveltejs/kit/vite";
 import path from "path";
+import { sveltePreprocess } from 'svelte-preprocess'
 
 
 // https://vitejs.dev/config/
@@ -9,6 +10,20 @@ export default defineConfig(async () => ({
   resolve: {
     alias: {
       $lib: `${path.resolve(__dirname, 'src')}/lib`,
+    },
+  },
+  test: {
+    globals: true,
+    environment: 'jsdom',
+    setupFiles: ['./src/setupTests.ts'],
+    include: ['src/**/*.{test,spec}.{js,ts}'],
+    environmentOptions: {
+      jsdom: {
+        url: "http://localhost/",
+      },
+    },
+    deps: {
+      inline: ['@testing-library/svelte']
     },
   },
 
