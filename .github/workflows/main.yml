@@ -51,6 +51,9 @@ jobs:
             args: ''
 
     runs-on: ${{ matrix.platform }}
+    env:
+      NODE_OPTIONS: '--max-old-space-size=4096'  # Higher heap memory limit is needed for Tauri build
+
     steps:
       - uses: actions/checkout@v4
 
