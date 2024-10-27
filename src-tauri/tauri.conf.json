@@ -64,7 +64,7 @@
       "deb": {
         "depends": [],
         "files": {
-          "/usr/share/polkit-1/actions/tech.tanay.freemind.policy": "src-tauri/assets/tech.tanay.freemind.policy"
+          "usr/share/polkit-1/actions/tech.tanay.freemind.policy": "src-tauri/assets/tech.tanay.freemind.policy"
         }
       },
       "macOS": {
