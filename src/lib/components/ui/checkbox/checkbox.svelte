@@ -1,7 +1,8 @@
 <script lang="ts">
   import { IconCheck as Check } from "@tabler/icons-svelte"
-  import { Checkbox as CheckboxPrimitive } from "bits-ui"
   import { IconMinus as Minus } from "@tabler/icons-svelte"
+  import { Checkbox as CheckboxPrimitive } from "bits-ui"
+
   import { cn } from "$lib/utils.js"
 
   type $$Props = CheckboxPrimitive.Props

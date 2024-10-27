@@ -1,16 +1,17 @@
 <script lang="ts">
-  import { type TimeRemaining, areSitesBlocked, isFocusEnabled, startFocus, stopFocus } from "$lib/focus"
-  import { Button } from "$lib/components/ui/button"
+  import { IconSettings } from "@tabler/icons-svelte"
+  import { invoke } from "@tauri-apps/api/tauri"
+  import { onMount } from "svelte"
+
+  import { goto } from "$app/navigation"
   import Footer from "$lib/components/Footer.svelte"
   import Header from "$lib/components/Header.svelte"
-  import { IconSettings } from "@tabler/icons-svelte"
+  import { Button } from "$lib/components/ui/button"
   import { Input } from "$lib/components/ui/input"
   import { Label } from "$lib/components/ui/label"
   import { Progress } from "$lib/components/ui/progress"
   import { Switch } from "$lib/components/ui/switch"
-  import { goto } from "$app/navigation"
-  import { invoke } from "@tauri-apps/api/tauri"
-  import { onMount } from "svelte"
+  import { areSitesBlocked, isFocusEnabled, startFocus, stopFocus, type TimeRemaining } from "$lib/focus"
   import { settingsStore } from "$lib/settings"
 
   let focusMode = false
@@ -92,6 +93,7 @@
     try {
       return (await invoke("is_elevated")) as boolean
     } catch (error) {
+      console.error("Error reading hosts file:", error)
       return false
     }
   }

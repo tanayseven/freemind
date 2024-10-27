@@ -1,7 +1,8 @@
 <script lang="ts">
   import { IconArrowLeft, IconMoon, IconSun } from "@tabler/icons-svelte"
-  import { Button } from "$lib/components/ui/button/index.js"
   import { toggleMode } from "mode-watcher"
+
+  import { Button } from "$lib/components/ui/button/index.js"
 
   export let hasBack: boolean = false
 </script>

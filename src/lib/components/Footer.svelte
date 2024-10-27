@@ -1,8 +1,8 @@
 <script lang="ts">
   import { Badge } from "$lib/components/ui/badge"
   import { Label } from "$lib/components/ui/label"
+  import * as Tooltip from "$lib/components/ui/tooltip"
   import type { TimeRemaining } from "$lib/focus"
-  import * as Tooltip from "$lib/components/ui/tooltip" // eslint-disable-line
 
   export let timeRemaining: TimeRemaining | null = null
 </script>

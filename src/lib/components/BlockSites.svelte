@@ -1,10 +1,12 @@
 <script lang="ts">
   import { IconSearch } from "@tabler/icons-svelte"
+
   import { Input } from "$lib/components/ui/input/index.js"
   import { ScrollArea } from "$lib/components/ui/scroll-area/index.js"
   import { Separator } from "$lib/components/ui/separator/index.js"
-  import type { WebsiteBlockList } from "../settings"
   import WebsiteListItem from "$lib/components/WebsiteListItem.svelte"
+
+  import type { WebsiteBlockList } from "../settings"
 
   export let selectedWebsiteGroup = ""
   export let websiteGroups: Record<string, WebsiteBlockList>
