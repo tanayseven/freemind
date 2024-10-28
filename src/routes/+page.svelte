@@ -67,7 +67,6 @@
   })
 
   const toggleFocus = async () => {
-    console.log("Toggling focus time")
     try {
       if (await isFocusEnabled()) {
         showStoppingOverlay = true

@@ -1,12 +1,9 @@
 <script lang="ts">
-  import BlockGroups from "$lib/components/BlockGroups.svelte"
-  import BlockSites from "$lib/components/BlockSites.svelte"
+  import BlockSitesTable from "$lib/components/BlockSitesTable.svelte"
   import Footer from "$lib/components/Footer.svelte"
   import Header from "$lib/components/Header.svelte"
   import { Separator } from "$lib/components/ui/separator"
   import { settingsStore } from "$lib/settings"
-
-  let selectedWebsiteGroup = ""
 
   $: websiteGroups = $settingsStore.websiteBlockList
 </script>
@@ -17,11 +14,8 @@
     <div>
       <h2 class="text-xl font-bold">Preferences</h2>
       <Separator class="my-4" />
-      <div class="grid grid-cols-[0.47fr_0.06fr_0.47fr]">
-        <BlockGroups bind:selectedWebsiteGroup bind:websiteGroups />
-        <span class="flex"></span>
-        <BlockSites bind:selectedWebsiteGroup bind:websiteGroups />
-      </div>
+      <BlockSitesTable data={websiteGroups} />
+      <Separator class="my-4" />
     </div>
   </div>
   <Footer />

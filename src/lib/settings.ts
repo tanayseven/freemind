@@ -11,31 +11,28 @@ import { adultWebsites } from "$lib/lists/adult"
 const settingsDirectoryName = "tech.tanay.freemind"
 const settingsFileName = "settings.json"
 
-export type Website = {
-  name: string
+export type WebsiteEntry = {
+  website: string
   enabled: boolean
+  category: string
 }
 
-export type WebsiteBlockList = {
-  enabled: boolean
-  websites: Website[]
-}
 
 export type Settings = {
   timerValue: number
-  websiteBlockList: Record<string, WebsiteBlockList>
+  websiteBlockList: WebsiteEntry[]
 }
 
 const defaultSettings: Settings = {
   timerValue: 25,
-  websiteBlockList: {
-    "Adult 18+": { enabled: true, websites: adultWebsites },
-    Entertainment: { enabled: true, websites: entertainmentWebsites },
-    Games: { enabled: true, websites: gamingWebsites },
-    News: { enabled: true, websites: newsWebsites },
-    Shopping: { enabled: true, websites: shoppingWebsites },
-    "Social Media": { enabled: true, websites: socialMediaWebsites },
-  },
+  websiteBlockList: [
+    ...socialMediaWebsites.map((website) => ({ website, enabled: true, category: "Social Media" })),
+    ...shoppingWebsites.map((website) => ({ website, enabled: true, category: "Shopping" })),
+    ...newsWebsites.map((website) => ({ website, enabled: true, category: "News" })),
+    ...entertainmentWebsites.map((website) => ({ website, enabled: true, category: "Entertainment" })),
+    ...gamingWebsites.map((website) => ({ website, enabled: true, category: "Gaming" })),
+    ...adultWebsites.map((website) => ({ website, enabled: true, category: "Porn 18+" })),
+  ],
 }
 
 const mergeSettings = (oldSettings: Settings, newSettings: Settings): Settings => {
@@ -46,7 +43,6 @@ const mergeSettings = (oldSettings: Settings, newSettings: Settings): Settings =
 }
 
 const saveSettings = async (settings: Settings) => {
-  console.log(`saving settings`)
   const configBase = await configDir()
   const settingsStem = `${configBase}${settingsDirectoryName}`
   await createDir(settingsStem, { recursive: true })
@@ -65,7 +61,6 @@ const loadSettings = async (): Promise<Settings> => {
   }
   const existingSettings: Settings = JSON.parse(await readTextFile(settingsPath))
   const settings = mergeSettings(defaultSettings, existingSettings)
-  console.log(`loaded settings ${JSON.stringify(settings)}`)
   return settings
 }
 

@@ -21,13 +21,10 @@ export const areSitesBlocked = async () => {
 
 const allEnabledDistractingSites = (): string[] => {
   const settings = get(settingsStore)
-  let listOfWebsitesToBlock: string[] = []
-  for (let websiteBlockList of Object.values(settings.websiteBlockList)) {
-    if (websiteBlockList.enabled) {
-      listOfWebsitesToBlock = [...listOfWebsitesToBlock, ...websiteBlockList.websites.map((website) => website.name)]
-    }
-  }
-  return listOfWebsitesToBlock
+  console.log(JSON.stringify(settings.websiteBlockList))
+  return settings.websiteBlockList
+    .filter((entry) => entry.enabled)
+    .map((entry) => entry.website)
 }
 
 const addBlockedSites = async (hostsFileContents: string) => {
@@ -70,7 +67,6 @@ const removeBlockedSites = async (hostsFileContents: string) => {
 }
 
 export const startFocus = async () => {
-  console.log("Starting focus time")
   try {
     const hostContents: string = await invoke("read_file_contents", { filePath: hostsFile })
     const modifiedHostContents = await addBlockedSites(hostContents)
@@ -82,7 +78,6 @@ export const startFocus = async () => {
 }
 
 export const stopFocus = async () => {
-  console.log("Stopping focus time")
   try {
     const hostContents: string = await invoke("read_file_contents", { filePath: hostsFile })
     const modifiedHostContents = await removeBlockedSites(hostContents)
@@ -94,7 +89,6 @@ export const stopFocus = async () => {
 }
 
 export const isFocusEnabled = async () => {
-  console.log("Checking focus time")
   try {
     return areSitesBlocked()
   } catch (error) {
