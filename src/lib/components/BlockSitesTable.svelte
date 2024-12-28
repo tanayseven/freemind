@@ -12,9 +12,7 @@
 
   import StatusBadge from "$lib/components/StatusBadge.svelte"
   import { Button } from "$lib/components/ui/button"
-  import * as DropdownMenu from "$lib/components/ui/dropdown-menu/index.js"
   import { Input } from "$lib/components/ui/input"
-  import * as Table from "$lib/components/ui/table"
   import type { WebsiteEntry } from "$lib/settings"
   import { cn } from "$lib/utils.js"
 

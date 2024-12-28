@@ -1,12 +1,12 @@
-import { configDir } from "@tauri-apps/api/path"
-import { createDir, readTextFile, writeFile } from "@tauri-apps/api/fs"
-import { writable } from "svelte/store"
-import { socialMediaWebsites } from "$lib/lists/socialMedia"
-import { shoppingWebsites } from "$lib/lists/shopping"
-import { newsWebsites } from "$lib/lists/news"
-import { entertainmentWebsites } from "$lib/lists/entertainment"
-import { gamingWebsites } from "$lib/lists/gaming"
-import { adultWebsites } from "$lib/lists/adult"
+import { configDir } from '@tauri-apps/api/path'
+import { createDir, readTextFile, writeFile } from '@tauri-apps/api/fs'
+import { writable } from 'svelte/store'
+import { socialMediaWebsites } from '$lib/lists/socialMedia'
+import { shoppingWebsites } from '$lib/lists/shopping'
+import { newsWebsites } from '$lib/lists/news'
+import { entertainmentWebsites } from '$lib/lists/entertainment'
+import { gamingWebsites } from '$lib/lists/gaming'
+import { adultWebsites } from '$lib/lists/adult'
 
 const settingsDirectoryName = "tech.tanay.freemind"
 const settingsFileName = "settings.json"

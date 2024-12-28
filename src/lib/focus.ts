@@ -1,7 +1,6 @@
-import { invoke } from "@tauri-apps/api/tauri"
-import { settingsStore } from "$lib/settings"
-import { get } from "svelte/store"
-import { readTextFile, writeFile } from "@tauri-apps/api/fs"
+import { invoke } from '@tauri-apps/api/tauri'
+import { settingsStore } from '$lib/settings'
+import { get } from 'svelte/store'
 
 const hostsFile = "/etc/hosts"
 const possibleSubdomains = ["www", "news", "blog", "web"]
@@ -21,10 +20,10 @@ export const areSitesBlocked = async () => {
 
 const allEnabledDistractingSites = (): string[] => {
   const settings = get(settingsStore)
-  console.log(JSON.stringify(settings.websiteBlockList))
-  return settings.websiteBlockList
-    .filter((entry) => entry.enabled)
-    .map((entry) => entry.website)
+  console.log(`-------------------- ${JSON.stringify(settings)}`)
+  return settings.websiteBlockList.map((entry)=> entry.website)
+    // .filter((entry) => entry.enabled)
+    // .map((entry) => entry.website)
 }
 
 const addBlockedSites = async (hostsFileContents: string) => {
