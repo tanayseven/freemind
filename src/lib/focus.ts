@@ -20,10 +20,9 @@ export const areSitesBlocked = async () => {
 
 const allEnabledDistractingSites = (): string[] => {
   const settings = get(settingsStore)
-  console.log(`-------------------- ${JSON.stringify(settings)}`)
-  return settings.websiteBlockList.map((entry)=> entry.website)
-    // .filter((entry) => entry.enabled)
-    // .map((entry) => entry.website)
+  return settings.websiteBlockList
+    .filter((entry) => entry.enabled)
+    .map((entry) => entry.website)
 }
 
 const addBlockedSites = async (hostsFileContents: string) => {

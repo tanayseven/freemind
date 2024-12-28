@@ -38,7 +38,7 @@ const defaultSettings: Settings = {
 const mergeSettings = (oldSettings: Settings, newSettings: Settings): Settings => {
   return {
     timerValue: newSettings.timerValue,
-    websiteBlockList: { ...oldSettings.websiteBlockList, ...newSettings.websiteBlockList },
+    websiteBlockList: [ ...oldSettings.websiteBlockList, ...newSettings.websiteBlockList ],
   }
 }
 
@@ -53,6 +53,7 @@ const saveSettings = async (settings: Settings) => {
 const loadSettings = async (): Promise<Settings> => {
   const configBase = await configDir()
   const settingsPath = `${configBase}${settingsDirectoryName}/${settingsFileName}`
+  console.log(`Loading settings from ${settingsPath}`)
   try {
     await readTextFile(settingsPath)
   } catch (e) {
